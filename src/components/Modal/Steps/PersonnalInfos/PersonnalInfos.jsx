@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./personnalInfos.scss";
 import { PiNumberCircleOneThin, PiNumberCircleTwoThin } from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
@@ -21,6 +21,21 @@ const PersonnalInfos = ({
       nombreParticipants: initialData?.nombreParticipants || 1,
     }),
   });
+
+  // ✅ Ajoute cet useEffect pour mettre à jour quand initialData change
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        nom: initialData.nom || "",
+        telephone: initialData.telephone || "",
+        email: initialData.email || "",
+        message: initialData.message || "",
+        ...(isNumberSelector && {
+          nombreParticipants: initialData.nombreParticipants || 1,
+        }),
+      });
+    }
+  }, [initialData, isNumberSelector]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

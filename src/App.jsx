@@ -1,15 +1,19 @@
-import ButtonModal from "./components/ButtonModal.jsx/ButtonModal";
-import { traineeship } from "./components/data/Data.js";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import HomePage from "./HomePage";
+import Success from "./components/Results/Success/Success";
+import Failure from "./components/Results/Failure/Failure";
+import TraineeshipCase from "./TraineeshipCase";
+
 function App() {
   return (
-    <div className="container-app">
-      <ButtonModal
-        text={"Réservez ce stage ici"}
-        traineeshipData={traineeship}
-        coursesData={""}
-        ShowData={""}
-      />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/traineeship-reservation" element={<TraineeshipCase />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Failure />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

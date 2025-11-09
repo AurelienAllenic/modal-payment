@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./modal.scss";
 import { IoMdClose } from "react-icons/io";
 import PersonnalInfos from "./Steps/PersonnalInfos/PersonnalInfos";
@@ -7,6 +8,14 @@ import Recap from "./Steps/Recap/Recap";
 const Modal = ({ dataType, data, onClose, isClosing }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
+
+  // Fonction pour générer un numéro de commande aléatoire
+  const generateOrderNumber = () => {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 10000);
+    return `CMD-${timestamp}-${random}`;
+  };
 
   // Configuration des étapes selon le type
   const getStepsConfig = () => {
@@ -46,14 +55,13 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
   const currentStepConfig = config.steps[currentStep];
 
   const handleNextStep = (stepData) => {
-    setFormData((prevData) => ({ ...prevData, ...stepData }));
+    const updatedFormData = { ...formData, ...stepData };
+    setFormData(updatedFormData);
 
     if (currentStep < config.totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Dernière étape - soumission finale
-      console.log("Données finales:", { ...formData, ...stepData });
-      // Ici tu peux envoyer au backend
+      console.log("Données finales:", updatedFormData);
     }
   };
 
@@ -61,6 +69,26 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleReserve = () => {
+    const orderNumber = generateOrderNumber();
+
+    console.log("Réservation finale:", {
+      orderNumber,
+      formData,
+      data,
+    });
+
+    // Redirection vers Success avec les données
+    navigate("/success", {
+      state: {
+        orderNumber,
+        formData,
+        data,
+        dataType,
+      },
+    });
   };
 
   const renderStep = () => {
@@ -83,7 +111,17 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         );
 
       case "Recap":
-        return <Recap formData={formData} data={data} />;
+        return (
+          <Recap
+            formData={formData}
+            data={data}
+            dataType={dataType}
+            stepNumber={stepNumber}
+            onPrev={handlePrevStep}
+            onReserve={handleReserve}
+            showPrevButton={currentStep > 0}
+          />
+        );
 
       case "CourseSelection":
         return <div className="course-selection-step"></div>;
