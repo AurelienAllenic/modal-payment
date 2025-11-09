@@ -83,7 +83,7 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         );
 
       case "Recap":
-        return <Recap data={formData} />;
+        return <Recap formData={formData} data={data} />;
 
       case "CourseSelection":
         return <div className="course-selection-step"></div>;

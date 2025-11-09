@@ -1,8 +1,8 @@
 import React from "react";
 import "./recap.scss";
 
-const Recap = ({ data }) => {
-  console.log(data);
+const Recap = ({ formData, data }) => {
+  console.log(formData, data);
   return <div>test</div>;
 };
 
