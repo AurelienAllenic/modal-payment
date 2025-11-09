@@ -1,0 +1,18 @@
+.btn-payment-modal {
+  font-size: 25px;
+  font-weight: 400;
+  background-color: none;
+  border: none;
+  cursor: pointer;
+  background: none;
+  transition: all ease-in-out 0.3s;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  width: 100%;
+  color: #000;
+  &:hover {
+    transition: all ease-in-out 0.3s;
+    transform: scale(1.02);
+  }
+}
