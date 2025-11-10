@@ -68,7 +68,12 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
+    @media (max-width: 625px) {
+      max-width: 400px;
+    }
+    @media (max-width: 420px) {
+      max-width: 300px;
+    }
     .container-close-modal {
       display: flex;
       width: 100%;

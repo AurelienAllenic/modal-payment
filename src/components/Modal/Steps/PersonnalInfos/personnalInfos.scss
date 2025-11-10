@@ -11,6 +11,12 @@
     display: flex;
     gap: 15px;
     align-items: center;
+    @media (max-width: 625px) {
+      padding: 20px 50px 0 10px;
+    }
+    @media (max-width: 420px) {
+      padding: 20px 40px 0 10px;
+    }
 
     .stepIcon {
       width: 35px;
@@ -19,12 +25,20 @@
 
     h2 {
       font-size: 28px;
+      @media (max-width: 625px) {
+        font-size: 20px;
+        text-align: center;
+      }
+      @media (max-width: 420px) {
+        font-size: 18px;
+      }
     }
   }
 
   form {
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
     padding: 0 25px;
 
     .personnalInfosFormContainer {
@@ -41,6 +55,12 @@
         justify-content: center;
         gap: 50px;
         align-items: center;
+        @media (max-width: 1184px) {
+          gap: 25px;
+        }
+        @media (max-width: 625px) {
+          gap: 10px;
+        }
 
         .singleInput {
           flex: 0 0 calc(25% - 100px);
@@ -68,6 +88,12 @@
         width: 500px;
         gap: 5px;
         flex-direction: column;
+        @media (max-width: 625px) {
+          width: 300px;
+        }
+        @media (max-width: 420px) {
+          width: 250px;
+        }
 
         label {
           font-size: 20px;
@@ -90,6 +116,12 @@
         justify-content: flex-start;
         align-items: flex-start;
         width: 500px;
+        @media (max-width: 625px) {
+          width: 300px;
+        }
+        @media (max-width: 420px) {
+          width: 250px;
+        }
 
         label {
           font-size: 20px;
@@ -103,8 +135,8 @@
           .number-display {
             background: #fff;
             border: 1px solid #ccc;
-            padding: 10px 20px;
-            font-size: 20px;
+            padding: 5px 10px;
+            font-size: 15px;
             font-weight: 500;
             min-width: 10px;
             text-align: center;
@@ -119,11 +151,12 @@
             .number-btn {
               background: #fff;
               border: 1px solid #ccc;
-              width: 30px;
-              height: 25px;
+              width: 20px;
+              height: 15px;
               display: flex;
               align-items: center;
               justify-content: center;
+              padding: 2px;
               cursor: pointer;
               transition: all 0.2s ease;
 
@@ -185,6 +218,7 @@
   .btn-next-step {
     position: absolute;
     right: 0;
+    bottom: 0;
     background: transparent;
     border: 1px solid #000;
     padding: 5px 15px;
@@ -195,6 +229,10 @@
     align-items: center;
     gap: 15px;
     transition: all 0.2s ease;
+    @media (max-width: 625px) {
+      right: -35px;
+      bottom: 25px;
+    }
 
     &:hover {
       transition: all 0.2s ease;
