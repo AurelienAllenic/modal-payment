@@ -1,13 +1,12 @@
 import React from "react";
-import { traineeship } from "./components/data/Data.js";
 import ButtonModal from "./components/ButtonModal.jsx/ButtonModal";
 
-const TraineeshipCase = () => {
+const Cases = ({data}) => {
   return (
     <div className="container-app">
       <ButtonModal
         text={"Réservez ce stage ici"}
-        traineeshipData={traineeship}
+        traineeshipData={data}
         coursesData={""}
         ShowData={""}
       />
@@ -15,4 +14,4 @@ const TraineeshipCase = () => {
   );
 };
 
-export default TraineeshipCase;
+export default Cases;
