@@ -10,15 +10,13 @@ const ButtonModal = ({ text, traineeshipData, coursesData, ShowData }) => {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    if (traineeshipData != "") {
+    if (traineeshipData && traineeshipData !== "") {
       setData(traineeshipData);
       setDataType("traineeship");
-    }
-    if (coursesData != "") {
+    } else if (coursesData && coursesData !== "") {
       setData(coursesData);
       setDataType("courses");
-    }
-    if (ShowData != "") {
+    } else if (ShowData && ShowData !== "") {
       setData(ShowData);
       setDataType("show");
     }

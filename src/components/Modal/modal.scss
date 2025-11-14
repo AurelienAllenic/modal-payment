@@ -61,7 +61,8 @@
     left: 50%;
     background: #e0e0e0;
     min-width: 75%;
-    min-height: 700px;
+    min-height: auto;
+    padding: 25px;
     animation: fadeSlideIn 0.3s 0.1s forwards;
     opacity: 0;
     display: flex;

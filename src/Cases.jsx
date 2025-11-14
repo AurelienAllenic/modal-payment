@@ -1,14 +1,16 @@
 import React from "react";
 import ButtonModal from "./components/ButtonModal.jsx/ButtonModal";
 
-const Cases = ({data}) => {
+const Cases = ({data, type}) => {
+  console.log(type);
+  
   return (
     <div className="container-app">
       <ButtonModal
-        text={"Réservez ce stage ici"}
-        traineeshipData={data}
+        text={type === "traineeship" ? "Réservez ce stage ici" : type === "show" ? "Réservez ce spectacle ici" : ""}
+        traineeshipData={type === "traineeship" ? data : ""}
         coursesData={""}
-        ShowData={""}
+        ShowData={type === "show" ? data : ""}
       />
     </div>
   );

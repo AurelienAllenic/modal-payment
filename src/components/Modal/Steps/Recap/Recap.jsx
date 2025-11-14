@@ -19,6 +19,13 @@ const Recap = ({
     onReserve();
   };
 
+  // Calcul du total pour les spectacles
+  const calculateShowTotal = () => {
+    const adultes = formData.adultes || 0;
+    const enfants = formData.enfants || 0;
+    return adultes * 15 + enfants * 10;
+  };
+
   return (
     <div className="containerRecap">
       <div className="RecapTitle">
@@ -42,6 +49,21 @@ const Recap = ({
                 <li>Participant(s) : {formData.nombreParticipants}</li>
               </ul>
               <p className="recapTotal">Total : 20 €</p>
+            </>
+          )}
+          {dataType === "show" && (
+            <>
+              <p>Spectacle :</p>
+              <ul>
+                <li>{data[0].title}</li>
+                <li>{data[0].place}</li>
+                <li>{data[0].hours}</li>
+                <li>{data[0].date}</li>
+                <li>Places adultes : {formData.adultes || 0} × 15€ = {(formData.adultes || 0) * 15}€</li>
+                <li>Places enfants : {formData.enfants || 0} × 10€ = {(formData.enfants || 0) * 10}€</li>
+                <li>Total places : {(formData.adultes || 0) + (formData.enfants || 0)}</li>
+              </ul>
+              <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>
           )}
         </div>

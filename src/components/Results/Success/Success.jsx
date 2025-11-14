@@ -15,6 +15,13 @@ const Success = () => {
     return null;
   }
 
+  // Calcul du total pour les spectacles
+  const calculateShowTotal = () => {
+    const adultes = formData?.adultes || 0;
+    const enfants = formData?.enfants || 0;
+    return adultes * 15 + enfants * 10;
+  };
+
   return (
     <div className="success-container">
       <div className="success-card">
@@ -41,6 +48,21 @@ const Success = () => {
                 {data[0]?.date} - {data[0]?.hours}
               </p>
               <p>Participants : {formData?.nombreParticipants}</p>
+            </div>
+          )}
+
+          {dataType === "show" && data && (
+            <div className="detail-section">
+              <h3>Détails du spectacle</h3>
+              <p>{data[0]?.title}</p>
+              <p>{data[0]?.place}</p>
+              <p>
+                {data[0]?.date} - {data[0]?.hours}
+              </p>
+              <p>Places adultes : {formData?.adultes || 0} × 15€ = {(formData?.adultes || 0) * 15}€</p>
+              <p>Places enfants : {formData?.enfants || 0} × 10€ = {(formData?.enfants || 0) * 10}€</p>
+              <p>Total places : {(formData?.adultes || 0) + (formData?.enfants || 0)}</p>
+              <p><strong>Total : {calculateShowTotal()} €</strong></p>
             </div>
           )}
         </div>
