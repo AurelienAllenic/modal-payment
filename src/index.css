@@ -19,6 +19,7 @@ a {
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 .container-app {
@@ -48,4 +49,17 @@ body {
 .containerOptions button:hover {
   transform: scale(1.01);
   transition: all 0.2s ease-in-out;
+}
+.return-home {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  font-size: 30px;
+  cursor: pointer;
+}
+.iconReturnHome {
+  width: 25px;
+  height: 25px;
+  transform: rotate(180deg);
+  fill: #000;
 }

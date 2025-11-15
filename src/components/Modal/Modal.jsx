@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./modal.scss";
 import { IoMdClose } from "react-icons/io";
 import PersonnalInfos from "./Steps/PersonnalInfos/PersonnalInfos";
 import Recap from "./Steps/Recap/Recap";
+import ShowReservation from "./Steps/ShowReservation/ShowReservation";
 
 const Modal = ({ dataType, data, onClose, isClosing }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
+
+  // Réinitialiser le modal quand le dataType change
+  useEffect(() => {
+    setCurrentStep(0);
+    setFormData({});
+  }, [dataType]);
 
   // Fonction pour générer un numéro de commande aléatoire
   const generateOrderNumber = () => {
@@ -41,9 +48,9 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return {
           totalSteps: 3,
           steps: [
-            { component: "ShowSelection" },
+            { component: "ShowReservation" },
             { component: "PersonnalInfos", needsNumberSelector: false },
-            { component: "Payment" },
+            { component: "Recap" },
           ],
         };
       default:
@@ -126,8 +133,17 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
       case "CourseSelection":
         return <div className="course-selection-step"></div>;
 
-      case "ShowSelection":
-        return <div className="show-selection-step"></div>;
+      case "ShowReservation":
+        return (
+          <ShowReservation
+            stepNumber={stepNumber}
+            onNext={handleNextStep}
+            onPrev={handlePrevStep}
+            initialData={formData}
+            showPrevButton={currentStep > 0}
+            show={data}
+          />
+        );
 
       default:
         return null;

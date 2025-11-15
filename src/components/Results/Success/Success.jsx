@@ -15,6 +15,21 @@ const Success = () => {
     return null;
   }
 
+  // Calcul du total pour les spectacles
+  const calculateShowTotal = () => {
+    const adultes = formData?.adultes || 0;
+    const enfants = formData?.enfants || 0;
+    return adultes * 15 + enfants * 10;
+  };
+
+  // Calcul du total pour les stages
+  const calculateTraineeshipTotal = () => {
+    const participants = formData?.nombreParticipants || 1;
+    return participants * 20;
+  };
+
+  const eventData = Array.isArray(data) ? data[0] : data;
+
   return (
     <div className="success-container">
       <div className="success-card">
@@ -35,12 +50,41 @@ const Success = () => {
           {dataType === "traineeship" && data && (
             <div className="detail-section">
               <h3>Détails du stage</h3>
-              <p>{data[0]?.title}</p>
-              <p>{data[0]?.place}</p>
+              <p>{eventData?.title}</p>
+              <p>{eventData?.place}</p>
               <p>
-                {data[0]?.date} - {data[0]?.hours}
+                {eventData?.date} - {eventData?.hours}
               </p>
               <p>Participants : {formData?.nombreParticipants}</p>
+              <p>
+                <strong>Total : {calculateTraineeshipTotal()} €</strong>
+              </p>
+            </div>
+          )}
+
+          {dataType === "show" && data && (
+            <div className="detail-section">
+              <h3>Détails du spectacle</h3>
+              <p>{eventData?.title}</p>
+              <p>{eventData?.place}</p>
+              <p>
+                {eventData?.date} - {eventData?.hours}
+              </p>
+              <p>
+                Places adultes : {formData?.adultes || 0} × 15€ ={" "}
+                {(formData?.adultes || 0) * 15}€
+              </p>
+              <p>
+                Places enfants : {formData?.enfants || 0} × 10€ ={" "}
+                {(formData?.enfants || 0) * 10}€
+              </p>
+              <p>
+                Total places :{" "}
+                {(formData?.adultes || 0) + (formData?.enfants || 0)}
+              </p>
+              <p>
+                <strong>Total : {calculateShowTotal()} €</strong>
+              </p>
             </div>
           )}
         </div>

@@ -143,7 +143,7 @@ const PersonnalInfos = ({
         <div className="buttons-group">
           {showPrevButton && (
             <button type="button" onClick={onPrev} className="btn-prev-step">
-              <HiArrowLongRight />
+              <HiArrowLongRight style={{ transform: "rotate(180deg)" }} />
               Précédent
             </button>
           )}
