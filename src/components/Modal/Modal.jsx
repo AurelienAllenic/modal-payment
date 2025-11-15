@@ -5,6 +5,8 @@ import { IoMdClose } from "react-icons/io";
 import PersonnalInfos from "./Steps/PersonnalInfos/PersonnalInfos";
 import Recap from "./Steps/Recap/Recap";
 import ShowReservation from "./Steps/ShowReservation/ShowReservation";
+import CourseType from "./Steps/CourseType/CourseType";
+import WhatDays from "./Steps/WhatDays/WhatDays";
 
 const Modal = ({ dataType, data, onClose, isClosing }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -39,7 +41,8 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return {
           totalSteps: 3,
           steps: [
-            { component: "CourseSelection" },
+            { component: "CourseType" },
+            { component: "WhatDays" },
             { component: "PersonnalInfos", needsNumberSelector: false },
             { component: "Payment" },
           ],
@@ -130,8 +133,27 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
           />
         );
 
-      case "CourseSelection":
-        return <div className="course-selection-step"></div>;
+      case "CourseType":
+        return (
+          <CourseType
+            stepNumber={stepNumber}
+            onPrev={handlePrevStep}
+            onReserve={handleReserve}
+            showPrevButton={currentStep > 0}
+            data={data}
+          />
+        );
+
+      case "WhatDays":
+        return (
+          <WhatDays
+            stepNumber={stepNumber}
+            onPrev={handlePrevStep}
+            onReserve={handleReserve}
+            showPrevButton={currentStep > 0}
+            data={data}
+          />
+        );
 
       case "ShowReservation":
         return (

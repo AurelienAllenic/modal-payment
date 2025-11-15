@@ -20,7 +20,7 @@ const Cases = ({ data, type }) => {
             ? "Réservez ce stage ici"
             : type === "show"
             ? "Réservez ce spectacle ici"
-            : type === "course"
+            : type === "courses"
             ? "Réservez ce cours ici"
             : ""
         }
