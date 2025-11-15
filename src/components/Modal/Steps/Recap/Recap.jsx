@@ -50,7 +50,9 @@ const Recap = ({
                 <li>{eventData?.date}</li>
                 <li>Participant(s) : {formData.nombreParticipants}</li>
               </ul>
-              <p className="recapTotal">Total : 20 €</p>
+              <p className="recapTotal">
+                Total : {formData.nombreParticipants * 20} €
+              </p>
             </>
           )}
           {dataType === "show" && (
