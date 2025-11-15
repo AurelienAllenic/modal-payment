@@ -10,8 +10,11 @@ const HomePage = () => {
         <button onClick={() => navigate("/traineeship-reservation")}>
           Voir le formulaire de stage
         </button>
-        <button onClick={() => navigate("/traineeship-show")}>
+        <button onClick={() => navigate("/show-reservation")}>
           Voir le formulaire de spectacle
+        </button>
+        <button onClick={() => navigate("/course-reservation")}>
+          Voir le formulaire de cours
         </button>
         <button onClick={() => navigate("/cancel")}>
           Voir la page d'annulation
