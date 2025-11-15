@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./showReservation.scss";
-import { PiNumberCircleOneThin, PiNumberCircleTwoThin, PiNumberCircleThreeThin } from "react-icons/pi";
+import {
+  PiNumberCircleOneThin,
+  PiNumberCircleTwoThin,
+  PiNumberCircleThreeThin,
+} from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 
@@ -10,6 +14,7 @@ const ShowReservation = ({
   onPrev,
   initialData,
   showPrevButton,
+  show,
 }) => {
   const [formData, setFormData] = useState({
     adultes: initialData?.adultes || 0,
@@ -56,80 +61,83 @@ const ShowReservation = ({
     }
   };
 
+  const totalPrice = formData.adultes * 15 + formData.enfants * 10;
+
   return (
     <div className="showReservationContainer">
       <div className="showReservationTitle">
         {getStepIcon()}
         <h2>Nombre de places</h2>
       </div>
-      <form onSubmit={handleSubmit}>
-        <div className="showReservationFormContainer">
-          <div className="placesInputsGroup">
-            <div className="placeInput">
-              <label>Adultes</label>
-              <div className="number-selector-wrapper">
-                <div className="number-display">
-                  {formData.adultes}
+      <div className="containerBothParts">
+        <form onSubmit={handleSubmit} className="showReservationForm">
+          <div className="showReservationFormContainer">
+            <div className="placesInputsGroup">
+              <div className="placeInput">
+                <label>Adultes / 15€</label>
+                <div className="number-selector-wrapper">
+                  <div className="number-display">{formData.adultes}</div>
+                  <div className="number-controls">
+                    <button
+                      type="button"
+                      className="number-btn"
+                      onClick={() => handleNumberChange("adultes", 1)}
+                    >
+                      <IoMdArrowDropup />
+                    </button>
+                    <button
+                      type="button"
+                      className="number-btn"
+                      onClick={() => handleNumberChange("adultes", -1)}
+                    >
+                      <IoMdArrowDropdown />
+                    </button>
+                  </div>
                 </div>
-                <div className="number-controls">
-                  <button
-                    type="button"
-                    className="number-btn"
-                    onClick={() => handleNumberChange("adultes", 1)}
-                  >
-                    <IoMdArrowDropup />
-                  </button>
-                  <button
-                    type="button"
-                    className="number-btn"
-                    onClick={() => handleNumberChange("adultes", -1)}
-                  >
-                    <IoMdArrowDropdown />
-                  </button>
+              </div>
+              <div className="placeInput">
+                <label>Enfants ( -10 ans ) / 10€</label>
+                <div className="number-selector-wrapper">
+                  <div className="number-display">{formData.enfants}</div>
+                  <div className="number-controls">
+                    <button
+                      type="button"
+                      className="number-btn"
+                      onClick={() => handleNumberChange("enfants", 1)}
+                    >
+                      <IoMdArrowDropup />
+                    </button>
+                    <button
+                      type="button"
+                      className="number-btn"
+                      onClick={() => handleNumberChange("enfants", -1)}
+                    >
+                      <IoMdArrowDropdown />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="placeInput">
-              <label>Enfants</label>
-              <div className="number-selector-wrapper">
-                <div className="number-display">
-                  {formData.enfants}
-                </div>
-                <div className="number-controls">
-                  <button
-                    type="button"
-                    className="number-btn"
-                    onClick={() => handleNumberChange("enfants", 1)}
-                  >
-                    <IoMdArrowDropup />
-                  </button>
-                  <button
-                    type="button"
-                    className="number-btn"
-                    onClick={() => handleNumberChange("enfants", -1)}
-                  >
-                    <IoMdArrowDropdown />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <p className="totalShowReservation">Total : {totalPrice} €</p>
           </div>
-        </div>
-        <div className="buttons-group">
-          {showPrevButton && (
-            <button type="button" onClick={onPrev} className="btn-prev-step">
-              <HiArrowLongRight />
-              Précédent
+          <div className="buttons-group-showReservation">
+            {showPrevButton && (
+              <button type="button" onClick={onPrev} className="btn-prev-step">
+                <HiArrowLongRight />
+                Précédent
+              </button>
+            )}
+            <button type="submit" className="btn-next-step">
+              Suivant <HiArrowLongRight />
             </button>
-          )}
-          <button type="submit" className="btn-next-step">
-            Suivant <HiArrowLongRight />
-          </button>
+          </div>
+        </form>
+        <div className="rightImage">
+          <img src={show.img} alt={show.alt} />
         </div>
-      </form>
+      </div>
     </div>
   );
 };
 
 export default ShowReservation;
-

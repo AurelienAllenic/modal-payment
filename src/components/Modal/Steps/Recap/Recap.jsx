@@ -26,6 +26,8 @@ const Recap = ({
     return adultes * 15 + enfants * 10;
   };
 
+  const eventData = Array.isArray(data) ? data[0] : data;
+
   return (
     <div className="containerRecap">
       <div className="RecapTitle">
@@ -42,10 +44,10 @@ const Recap = ({
             <>
               <p>Stage :</p>
               <ul>
-                <li>{data[0].title}</li>
-                <li>{data[0].place}</li>
-                <li>{data[0].hours}</li>
-                <li>{data[0].date}</li>
+                <li>{eventData?.title}</li>
+                <li>{eventData?.place}</li>
+                <li>{eventData?.hours}</li>
+                <li>{eventData?.date}</li>
                 <li>Participant(s) : {formData.nombreParticipants}</li>
               </ul>
               <p className="recapTotal">Total : 20 €</p>
@@ -55,13 +57,22 @@ const Recap = ({
             <>
               <p>Spectacle :</p>
               <ul>
-                <li>{data[0].title}</li>
-                <li>{data[0].place}</li>
-                <li>{data[0].hours}</li>
-                <li>{data[0].date}</li>
-                <li>Places adultes : {formData.adultes || 0} × 15€ = {(formData.adultes || 0) * 15}€</li>
-                <li>Places enfants : {formData.enfants || 0} × 10€ = {(formData.enfants || 0) * 10}€</li>
-                <li>Total places : {(formData.adultes || 0) + (formData.enfants || 0)}</li>
+                <li>{eventData?.title}</li>
+                <li>{eventData?.place}</li>
+                <li>{eventData?.hours}</li>
+                <li>{eventData?.date}</li>
+                <li>
+                  Places adultes : {formData.adultes || 0} × 15€ ={" "}
+                  {(formData.adultes || 0) * 15}€
+                </li>
+                <li>
+                  Places enfants : {formData.enfants || 0} × 10€ ={" "}
+                  {(formData.enfants || 0) * 10}€
+                </li>
+                <li>
+                  Total places :{" "}
+                  {(formData.adultes || 0) + (formData.enfants || 0)}
+                </li>
               </ul>
               <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>

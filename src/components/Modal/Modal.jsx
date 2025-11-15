@@ -141,6 +141,7 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
             onPrev={handlePrevStep}
             initialData={formData}
             showPrevButton={currentStep > 0}
+            show={data}
           />
         );
 

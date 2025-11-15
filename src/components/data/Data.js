@@ -6,11 +6,11 @@ export const traineeship = [
     hours: "14h30-16h00",
   },
 ];
-export const show = [
-  {
-    title: "Tap Show",
-    date: "13/12/2025",
-    place: "Salle des deux moulins",
-    hours: "19h30-21h00",
-  },
-];
+export const show = {
+  title: "Tap Show",
+  date: "13/12/2025",
+  place: "Salle des deux moulins",
+  hours: "19h30-21h00",
+  img: `${import.meta.env.VITE_CLOUDINARY_URL}/affiche_za4cxs.webp`,
+  alt: "Affiche du spectacle Tap Show",
+};
