@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiNumberCircleOneThin } from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
-import "./courseType.scss"; // Assume you create a SCSS file for styling
+import { HiCheck } from "react-icons/hi";
+import "./courseType.scss";
 
-const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
+const CourseType = ({
+  stepNumber,
+  onNext,
+  onPrev,
+  showPrevButton,
+  initialData,
+}) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("");
   const [selectedCourseType, setSelectedCourseType] = useState("");
 
-  const handleAgeGroupChange = (e) => {
-    setSelectedAgeGroup(e.target.value);
-  };
+  useEffect(() => {
+    if (initialData) {
+      setSelectedAgeGroup(initialData.ageGroup || "");
+      setSelectedCourseType(initialData.courseType || "");
+    }
+  }, [initialData]);
 
-  const handleCourseTypeChange = (e) => {
-    setSelectedCourseType(e.target.value);
-  };
+  const handleAgeGroupChange = (value) => setSelectedAgeGroup(value);
+  const handleCourseTypeChange = (value) => setSelectedCourseType(value);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,14 +33,8 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
     onNext({ ageGroup: selectedAgeGroup, courseType: selectedCourseType });
   };
 
-  const getStepIcon = () => {
-    switch (stepNumber) {
-      case 1:
-        return <PiNumberCircleOneThin className="stepIcon" />;
-      default:
-        return null;
-    }
-  };
+  const getStepIcon = () =>
+    stepNumber === 1 ? <PiNumberCircleOneThin className="stepIcon" /> : null;
 
   return (
     <div className="courseTypeContainer">
@@ -44,84 +47,50 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
           <div className="section">
             <h3>Qui êtes-vous ?</h3>
             <div className="options">
-              <label>
-                <input
-                  type="radio"
-                  name="ageGroup"
-                  value="enfant"
-                  checked={selectedAgeGroup === "enfant"}
-                  onChange={handleAgeGroupChange}
-                />
-                Enfant ( 8+ )
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="ageGroup"
-                  value="ado"
-                  checked={selectedAgeGroup === "ado"}
-                  onChange={handleAgeGroupChange}
-                />
-                Ado ( 12+ )
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="ageGroup"
-                  value="adulte"
-                  checked={selectedAgeGroup === "adulte"}
-                  onChange={handleAgeGroupChange}
-                />
-                Adulte
-              </label>
+              {["enfant", "ado", "adulte"].map((val) => (
+                <label key={val} className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedAgeGroup === val}
+                    onChange={() => handleAgeGroupChange(val)}
+                  />
+                  <span className="checkmark">
+                    {selectedAgeGroup === val && <HiCheck />}
+                  </span>
+                  {val === "enfant"
+                    ? "Enfant (8+)"
+                    : val === "ado"
+                    ? "Ado (12+)"
+                    : "Adulte"}
+                </label>
+              ))}
             </div>
           </div>
           <div className="section">
             <h3>Quel type de cours souhaitez-vous réserver ?</h3>
             <div className="options">
-              <label>
-                <input
-                  type="radio"
-                  name="courseType"
-                  value="essai"
-                  checked={selectedCourseType === "essai"}
-                  onChange={handleCourseTypeChange}
-                />
-                Cours à l'essai ( 10€ )
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="courseType"
-                  value="trimestre"
-                  checked={selectedCourseType === "trimestre"}
-                  onChange={handleCourseTypeChange}
-                />
-                Cours au trimestre ( 200€ à 400€, 1 à 3 fois par semaine )
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="courseType"
-                  value="semestre"
-                  checked={selectedCourseType === "semestre"}
-                  onChange={handleCourseTypeChange}
-                />
-                Cours au semestre ( 300€ à 600€, 1 à 3 fois par semaine )
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="courseType"
-                  value="annee"
-                  checked={selectedCourseType === "annee"}
-                  onChange={handleCourseTypeChange}
-                />
-                Cours à l'année ( 600€ à 800€, 1 à 3 fois par semaine )
-              </label>
+              {[
+                { val: "essai", label: "Cours à l'essai (10€)" },
+                { val: "trimestre", label: "Cours au trimestre (200€ à 400€)" },
+                { val: "semestre", label: "Cours au semestre (300€ à 600€)" },
+                { val: "annee", label: "Cours à l'année (600€ à 800€)" },
+              ].map(({ val, label }) => (
+                <label key={val} className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedCourseType === val}
+                    onChange={() => handleCourseTypeChange(val)}
+                  />
+                  <span className="checkmark">
+                    {selectedCourseType === val && <HiCheck />}
+                  </span>
+                  {label}
+                </label>
+              ))}
             </div>
           </div>
         </div>
+
         <div className="buttons-group">
           {showPrevButton && (
             <button type="button" onClick={onPrev} className="btn-prev-step">

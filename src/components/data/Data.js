@@ -109,3 +109,10 @@ export const trialCourses = [
     place: "Salle de l'Aljad",
   },
 ];
+
+export const prices = {
+  trial: 10,
+  trimester: 200,
+  semester: 300,
+  year: 600,
+};

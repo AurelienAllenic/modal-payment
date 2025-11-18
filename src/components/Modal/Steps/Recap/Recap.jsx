@@ -79,6 +79,34 @@ const Recap = ({
               <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>
           )}
+          {dataType === "courses" && (
+            <>
+              <p>Cours :</p>
+              <ul>
+                <li>Catégorie d’âge : {formData.ageGroup}</li>
+                <li>Type de cours : {formData.courseType}</li>
+                {formData.trialCourse && (
+                  <>
+                    <li>Date du cours : {formData.trialCourse.date}</li>
+                    <li>Heure : {formData.trialCourse.time}</li>
+                    <li>Lieu : {formData.trialCourse.place}</li>
+                  </>
+                )}
+              </ul>
+              <p className="recapTotal">
+                Total :{" "}
+                {formData.courseType === "essai"
+                  ? "10 €"
+                  : formData.courseType === "trimestre"
+                  ? "200 à 400 €"
+                  : formData.courseType === "semestre"
+                  ? "300 à 600 €"
+                  : formData.courseType === "annee"
+                  ? "600 à 800 €"
+                  : "—"}
+              </p>
+            </>
+          )}
         </div>
         <div className="containerUserRecap">
           <p>Vos informations :</p>

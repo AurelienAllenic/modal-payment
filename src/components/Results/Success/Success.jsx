@@ -87,6 +87,37 @@ const Success = () => {
               </p>
             </div>
           )}
+
+          {dataType === "courses" && (
+            <div className="detail-section">
+              <h3>Détails du cours</h3>
+              <p>Catégorie d’âge : {formData?.ageGroup}</p>
+              <p>Type de cours : {formData?.courseType}</p>
+
+              {formData?.trialCourse && (
+                <>
+                  <p>Date : {formData.trialCourse.date}</p>
+                  <p>Heure : {formData.trialCourse.time}</p>
+                  <p>Lieu : {formData.trialCourse.place}</p>
+                </>
+              )}
+
+              <p>
+                <strong>
+                  Total :{" "}
+                  {formData?.courseType === "essai"
+                    ? "10 €"
+                    : formData?.courseType === "trimestre"
+                    ? "200 à 400 €"
+                    : formData?.courseType === "semestre"
+                    ? "300 à 600 €"
+                    : formData?.courseType === "annee"
+                    ? "600 à 800 €"
+                    : "—"}
+                </strong>
+              </p>
+            </div>
+          )}
         </div>
 
         <p className="confirmation-message">
