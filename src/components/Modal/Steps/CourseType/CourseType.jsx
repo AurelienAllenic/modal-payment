@@ -52,7 +52,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedAgeGroup === "enfant"}
                   onChange={handleAgeGroupChange}
                 />
-                Enfant
+                Enfant ( 8+ )
               </label>
               <label>
                 <input
@@ -62,7 +62,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedAgeGroup === "ado"}
                   onChange={handleAgeGroupChange}
                 />
-                Ado
+                Ado ( 12+ )
               </label>
               <label>
                 <input
@@ -87,7 +87,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedCourseType === "essai"}
                   onChange={handleCourseTypeChange}
                 />
-                Cours à l'essai
+                Cours à l'essai ( 10€ )
               </label>
               <label>
                 <input
@@ -97,7 +97,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedCourseType === "trimestre"}
                   onChange={handleCourseTypeChange}
                 />
-                Cours au trimestre
+                Cours au trimestre ( 200€ à 400€, 1 à 3 fois par semaine )
               </label>
               <label>
                 <input
@@ -107,7 +107,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedCourseType === "semestre"}
                   onChange={handleCourseTypeChange}
                 />
-                Cours au semestre
+                Cours au semestre ( 300€ à 600€, 1 à 3 fois par semaine )
               </label>
               <label>
                 <input
@@ -117,7 +117,7 @@ const CourseType = ({ stepNumber, onNext, onPrev, showPrevButton }) => {
                   checked={selectedCourseType === "annee"}
                   onChange={handleCourseTypeChange}
                 />
-                Cours à l'année
+                Cours à l'année ( 600€ à 800€, 1 à 3 fois par semaine )
               </label>
             </div>
           </div>

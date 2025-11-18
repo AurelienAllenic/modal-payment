@@ -137,8 +137,8 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return (
           <CourseType
             stepNumber={stepNumber}
+            onNext={handleNextStep}
             onPrev={handlePrevStep}
-            onReserve={handleReserve}
             showPrevButton={currentStep > 0}
             data={data}
           />
@@ -148,10 +148,11 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return (
           <WhatDays
             stepNumber={stepNumber}
+            onNext={handleNextStep}
             onPrev={handlePrevStep}
-            onReserve={handleReserve}
             showPrevButton={currentStep > 0}
             data={data}
+            formData={formData}
           />
         );
 

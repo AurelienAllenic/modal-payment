@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
-  color: #000; // Texte noir par défaut
+  color: #000;
 
   .courseTypeTitle {
     display: flex;
@@ -47,15 +47,14 @@
 
             input[type="radio"] {
               margin-right: 8px;
-              accent-color: #007bff; // Couleur d'accent pour les radios
+              accent-color: #007bff;
             }
           }
         }
 
         &:nth-child(2) {
-          // La seconde section (types de cours)
           .options {
-            flex-direction: column; // Affichage en colonne
+            flex-direction: column;
             gap: 10px;
           }
         }
@@ -90,7 +89,7 @@
       .btn-next-step {
         position: absolute;
         right: 0;
-        bottom: 0;
+        bottom: -30px;
         background: transparent;
         border: 1px solid #000;
         padding: 5px 15px;

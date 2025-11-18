@@ -1,8 +1,8 @@
 import React from "react";
 import "./classic.scss";
 
-const Classic = () => {
-  return <div></div>;
+const Classic = ({ data, formData }) => {
+  return <div>Classic</div>;
 };
 
 export default Classic;
