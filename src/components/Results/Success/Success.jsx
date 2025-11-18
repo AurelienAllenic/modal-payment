@@ -34,7 +34,7 @@ const Success = () => {
     <div className="success-container">
       <div className="success-card">
         <FaCheckCircle className="success-icon" />
-        <h1>Réservation confirmée !</h1>
+        <h1>Réservation confirmée&nbsp;!</h1>
         <p className="order-number">
           Numéro de commande : <strong>{orderNumber}</strong>
         </p>
@@ -106,7 +106,7 @@ const Success = () => {
                 <strong>
                   Total :{" "}
                   {formData?.courseType === "essai"
-                    ? "10 €"
+                    ? "10€"
                     : formData?.courseType === "trimestre"
                     ? "200 à 400 €"
                     : formData?.courseType === "semestre"
