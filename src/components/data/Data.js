@@ -140,4 +140,6 @@ export const prices = {
   semester2: 500,
   semester3: 650,
   year: 600,
+  year2: 750,
+  year3: 850,
 };

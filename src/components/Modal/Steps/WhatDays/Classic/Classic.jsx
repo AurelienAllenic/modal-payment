@@ -39,6 +39,7 @@ const Classic = ({
     const type = formData?.courseType;
 
     let priceKey = "trial";
+
     if (type === "trimestre") {
       priceKey =
         selectedCount === 1
@@ -54,7 +55,8 @@ const Classic = ({
           ? "semester2"
           : "semester3";
     } else if (type === "annee") {
-      priceKey = "year";
+      priceKey =
+        selectedCount === 1 ? "year" : selectedCount === 2 ? "year2" : "year3";
     } else if (type === "essai") {
       priceKey = "trial";
     }
