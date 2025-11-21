@@ -43,10 +43,33 @@
         border-radius: 5px;
         padding: 0.5rem;
         max-height: 250px;
-        overflow-y: scroll;
+        overflow-y: auto;
         gap: 10px;
         display: flex;
         flex-direction: column;
+        /* Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+
+        /* Chrome / Safari / Edge */
+        &::-webkit-scrollbar {
+          width: 6px;
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.4);
+          border-radius: 10px;
+          border: none;
+        }
+
+        &::-webkit-scrollbar-button {
+          display: none;
+        }
       }
       .coursesWrapper {
         display: flex;
@@ -57,6 +80,29 @@
         ); // environ 3 éléments visibles (hauteur approximative)
         overflow-y: auto;
         padding-right: 0.3rem; // espace pour la scrollbar
+        /* Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+
+        /* Chrome / Safari / Edge */
+        &::-webkit-scrollbar {
+          width: 6px;
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.4);
+          border-radius: 10px;
+          border: none;
+        }
+
+        &::-webkit-scrollbar-button {
+          display: none;
+        }
       }
 
       .courseItem {
