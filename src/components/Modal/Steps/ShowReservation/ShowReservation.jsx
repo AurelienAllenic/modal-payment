@@ -21,7 +21,6 @@ const ShowReservation = ({
     enfants: initialData?.enfants || 0,
   });
 
-  // Mise à jour quand initialData change
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -40,7 +39,6 @@ const ShowReservation = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Vérifier qu'au moins une place est sélectionnée
     if (formData.adultes === 0 && formData.enfants === 0) {
       alert("Veuillez sélectionner au moins une place");
       return;

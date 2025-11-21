@@ -79,6 +79,47 @@ const Recap = ({
               <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>
           )}
+          {dataType === "courses" && (
+            <>
+              <p>Cours :</p>
+              <ul>
+                <li>Catégorie d’âge : {formData.ageGroup}</li>
+                <li>Type de cours : {formData.courseType}</li>
+
+                {/* CAS ESSAI (1 cours unique) */}
+                {formData.courseType === "essai" && formData.trialCourse && (
+                  <>
+                    <li>Date du cours : {formData.trialCourse.date}</li>
+                    <li>Heure : {formData.trialCourse.time}</li>
+                    <li>Lieu : {formData.trialCourse.place}</li>
+                  </>
+                )}
+
+                {/* CAS CLASSIC AVEC PLUSIEURS JOURS */}
+                {formData.courseType !== "essai" && formData.classicCourses && (
+                  <>
+                    <li>
+                      <strong>Cours sélectionnés :</strong>
+                    </li>
+                    <ul>
+                      {Object.entries(formData.classicCourses)
+                        .filter(([, course]) => course) // seulement les jours sélectionnés
+                        .map(([day, course], index) => (
+                          <li key={index}>
+                            <strong>{day} :</strong> {course.date} –{" "}
+                            {course.time} – {course.place}
+                          </li>
+                        ))}
+                    </ul>
+                  </>
+                )}
+              </ul>
+
+              <p className="recapTotal">
+                Total : {formData.totalPrice ? `${formData.totalPrice} €` : "—"}
+              </p>
+            </>
+          )}
         </div>
         <div className="containerUserRecap">
           <p>Vos informations :</p>

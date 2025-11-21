@@ -39,12 +39,12 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         };
       case "courses":
         return {
-          totalSteps: 3,
+          totalSteps: 4,
           steps: [
             { component: "CourseType" },
             { component: "WhatDays" },
             { component: "PersonnalInfos", needsNumberSelector: false },
-            { component: "Payment" },
+            { component: "Recap" },
           ],
         };
       case "show":
@@ -137,10 +137,11 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return (
           <CourseType
             stepNumber={stepNumber}
+            onNext={handleNextStep}
             onPrev={handlePrevStep}
-            onReserve={handleReserve}
             showPrevButton={currentStep > 0}
             data={data}
+            initialData={formData}
           />
         );
 
@@ -148,10 +149,11 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
         return (
           <WhatDays
             stepNumber={stepNumber}
+            onNext={handleNextStep}
             onPrev={handlePrevStep}
-            onReserve={handleReserve}
             showPrevButton={currentStep > 0}
             data={data}
+            formData={formData}
           />
         );
 

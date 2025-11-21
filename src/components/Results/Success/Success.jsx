@@ -34,7 +34,7 @@ const Success = () => {
     <div className="success-container">
       <div className="success-card">
         <FaCheckCircle className="success-icon" />
-        <h1>Réservation confirmée !</h1>
+        <h1>Réservation confirmée&nbsp;!</h1>
         <p className="order-number">
           Numéro de commande : <strong>{orderNumber}</strong>
         </p>
@@ -84,6 +84,49 @@ const Success = () => {
               </p>
               <p>
                 <strong>Total : {calculateShowTotal()} €</strong>
+              </p>
+            </div>
+          )}
+
+          {dataType === "courses" && (
+            <div className="detail-section">
+              <h3>Détails du cours</h3>
+              <p>Catégorie d’âge : {formData?.ageGroup}</p>
+              <p>Type de cours : {formData?.courseType}</p>
+
+              {/* CAS ESSAI */}
+              {formData?.courseType === "essai" && formData?.trialCourse && (
+                <>
+                  <p>Date : {formData.trialCourse.date}</p>
+                  <p>Heure : {formData.trialCourse.time}</p>
+                  <p>Lieu : {formData.trialCourse.place}</p>
+                </>
+              )}
+
+              {/* CAS CLASSIC AVEC PLUSIEURS COURS */}
+              {formData?.courseType !== "essai" && formData?.classicCourses && (
+                <>
+                  <p>
+                    <strong>Cours sélectionnés :</strong>
+                  </p>
+                  <ul>
+                    {Object.entries(formData.classicCourses)
+                      .filter(([, course]) => course) // garde uniquement les jours sélectionnés
+                      .map(([day, course], index) => (
+                        <li key={index}>
+                          <strong>{day}</strong> : {course.date} – {course.time}{" "}
+                          – {course.place}
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
+
+              <p>
+                <strong>
+                  Total :{" "}
+                  {formData?.totalPrice ? `${formData.totalPrice} €` : "—"}
+                </strong>
               </p>
             </div>
           )}
