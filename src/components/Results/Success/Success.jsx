@@ -94,7 +94,8 @@ const Success = () => {
               <p>Catégorie d’âge : {formData?.ageGroup}</p>
               <p>Type de cours : {formData?.courseType}</p>
 
-              {formData?.trialCourse && (
+              {/* CAS ESSAI */}
+              {formData?.courseType === "essai" && formData?.trialCourse && (
                 <>
                   <p>Date : {formData.trialCourse.date}</p>
                   <p>Heure : {formData.trialCourse.time}</p>
@@ -102,18 +103,29 @@ const Success = () => {
                 </>
               )}
 
+              {/* CAS CLASSIC AVEC PLUSIEURS COURS */}
+              {formData?.courseType !== "essai" && formData?.classicCourses && (
+                <>
+                  <p>
+                    <strong>Cours sélectionnés :</strong>
+                  </p>
+                  <ul>
+                    {Object.entries(formData.classicCourses)
+                      .filter(([, course]) => course) // garde uniquement les jours sélectionnés
+                      .map(([day, course], index) => (
+                        <li key={index}>
+                          <strong>{day}</strong> : {course.date} – {course.time}{" "}
+                          – {course.place}
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
+
               <p>
                 <strong>
                   Total :{" "}
-                  {formData?.courseType === "essai"
-                    ? "10€"
-                    : formData?.courseType === "trimestre"
-                    ? "200 à 400 €"
-                    : formData?.courseType === "semestre"
-                    ? "300 à 600 €"
-                    : formData?.courseType === "annee"
-                    ? "600 à 800 €"
-                    : "—"}
+                  {formData?.totalPrice ? `${formData.totalPrice} €` : "—"}
                 </strong>
               </p>
             </div>

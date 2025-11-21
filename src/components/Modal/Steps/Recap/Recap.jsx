@@ -85,25 +85,38 @@ const Recap = ({
               <ul>
                 <li>Catégorie d’âge : {formData.ageGroup}</li>
                 <li>Type de cours : {formData.courseType}</li>
-                {formData.trialCourse && (
+
+                {/* CAS ESSAI (1 cours unique) */}
+                {formData.courseType === "essai" && formData.trialCourse && (
                   <>
                     <li>Date du cours : {formData.trialCourse.date}</li>
                     <li>Heure : {formData.trialCourse.time}</li>
                     <li>Lieu : {formData.trialCourse.place}</li>
                   </>
                 )}
+
+                {/* CAS CLASSIC AVEC PLUSIEURS JOURS */}
+                {formData.courseType !== "essai" && formData.classicCourses && (
+                  <>
+                    <li>
+                      <strong>Cours sélectionnés :</strong>
+                    </li>
+                    <ul>
+                      {Object.entries(formData.classicCourses)
+                        .filter(([, course]) => course) // seulement les jours sélectionnés
+                        .map(([day, course], index) => (
+                          <li key={index}>
+                            <strong>{day} :</strong> {course.date} –{" "}
+                            {course.time} – {course.place}
+                          </li>
+                        ))}
+                    </ul>
+                  </>
+                )}
               </ul>
+
               <p className="recapTotal">
-                Total :{" "}
-                {formData.courseType === "essai"
-                  ? "10 €"
-                  : formData.courseType === "trimestre"
-                  ? "200 à 400 €"
-                  : formData.courseType === "semestre"
-                  ? "300 à 600 €"
-                  : formData.courseType === "annee"
-                  ? "600 à 800 €"
-                  : "—"}
+                Total : {formData.totalPrice ? `${formData.totalPrice} €` : "—"}
               </p>
             </>
           )}
