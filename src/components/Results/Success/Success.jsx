@@ -24,8 +24,8 @@ const Success = () => {
     const fetchSession = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4242/retrieve-session?session_id=${sessionId}`
-        );
+          `${import.meta.env.VITE_BACKEND_URL}/retrieve-session?session_id=${sessionId}`
+        );        
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
         setSession(data);
