@@ -102,7 +102,7 @@ const Success = () => {
         {/* NUMÉRO DE COMMANDE + BOUTON COPIER */}
         <div className="order-number-wrapper">
           <p className="order-number">
-            Numéro de commande : <strong>{session.id}</strong>
+            Numéro de commande : <strong>{session.orderNumber || session.id}</strong>
           </p>
           <button onClick={copyOrderNumber} className="copy-btn" title="Copier le numéro de commande">
             {copied ? (
