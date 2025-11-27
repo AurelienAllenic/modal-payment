@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./OrdersList.scss";
+import "./ordersList.scss";
 
 const TABS = [
   { key: "all", label: "Toutes les commandes", count: 0 },
