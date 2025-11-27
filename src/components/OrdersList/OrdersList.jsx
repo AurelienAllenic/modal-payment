@@ -81,7 +81,6 @@ const OrdersList = () => {
             className={`tab ${activeTab === tab.key ? "active" : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
-            {tab.icon && <span className="tab-icon">{tab.icon}</span>}
             {tab.label}
             <span className="tab-count">{counts[tab.key]}</span>
           </button>
