@@ -9,12 +9,14 @@ import {
   trialCourses,
 } from "./components/data/Data.js";
 import Cases from "./Cases.jsx";
+import OrdersList from "./components/OrdersList/OrdersList.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/orders-list" element={<OrdersList />} />
         <Route
           path="/traineeship-reservation"
           element={<Cases data={traineeship} type="traineeship" />}

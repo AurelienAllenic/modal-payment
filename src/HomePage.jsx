@@ -19,6 +19,9 @@ const HomePage = () => {
         <button onClick={() => navigate("/cancel")}>
           Voir la page d'annulation
         </button>
+        <button onClick={() => navigate("/orders-list")}>
+          Voir la liste des commandes
+        </button>
       </div>
     </div>
   );
