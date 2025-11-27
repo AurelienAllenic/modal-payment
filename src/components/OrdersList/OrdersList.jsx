@@ -19,7 +19,7 @@ const OrdersList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/orders`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/orders`);
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Impossible de charger les commandes");
         setAllOrders(json.data);
