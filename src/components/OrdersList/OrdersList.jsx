@@ -17,20 +17,28 @@ const OrdersList = () => {
 
   // Chargement une seule fois
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/orders`);
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || "Impossible de charger les commandes");
-        setAllOrders(json.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/orders`, {
+        credentials: "include",
+        mode: "cors",
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Erreur serveur" }));
+        throw new Error(err.error || `HTTP ${res.status}`);
       }
-    };
-    fetchOrders();
-  }, []);
+
+      const json = await res.json();
+      setAllOrders(json.data || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchOrders();
+}, []);
 
   // Filtrage quand on change d'onglet
   useEffect(() => {
