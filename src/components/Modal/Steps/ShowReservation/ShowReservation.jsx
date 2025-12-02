@@ -7,6 +7,7 @@ import {
 } from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
+import { prices } from "../../../data/Data";
 
 const ShowReservation = ({
   stepNumber,
@@ -59,7 +60,7 @@ const ShowReservation = ({
     }
   };
 
-  const totalPrice = formData.adultes * 15 + formData.enfants * 10;
+  const totalPrice = formData.adultes * prices.show_adult + formData.enfants * prices.show_child;
 
   return (
     <div className="showReservationContainer">

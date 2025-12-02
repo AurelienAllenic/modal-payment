@@ -36,33 +36,33 @@ const Classic = ({
       return;
     }
 
-    const type = formData?.courseType;
+    const ageGroup = formData?.ageGroup; // "enfant", "ado", "adulte"
+    const isChild = ageGroup === "enfant";
+    const type = formData?.courseType; // "trimestre", "semestre", "annee"
 
-    let priceKey = "trial";
-
+    // Construction du préfixe
+    let prefix = "";
     if (type === "trimestre") {
-      priceKey =
-        selectedCount === 1
-          ? "trimester"
-          : selectedCount === 2
-          ? "trimester2"
-          : "trimester3";
+      prefix = selectedCount === 1 ? "trimester" : `trimester${selectedCount}`;
     } else if (type === "semestre") {
-      priceKey =
-        selectedCount === 1
-          ? "semester"
-          : selectedCount === 2
-          ? "semester2"
-          : "semester3";
+      prefix = selectedCount === 1 ? "semester" : `semester${selectedCount}`;
     } else if (type === "annee") {
-      priceKey =
-        selectedCount === 1 ? "year" : selectedCount === 2 ? "year2" : "year3";
-    } else if (type === "essai") {
-      priceKey = "trial";
+      prefix = selectedCount === 1 ? "year" : `year${selectedCount}`;
+    } else {
+      setTotalPrice(0);
+      return;
     }
 
-    setTotalPrice(prices[priceKey] || 0);
-  }, [selectedCourses, formData.courseType]);
+    const suffix = isChild ? "_child" : "_adult";
+    const priceKey = prefix + suffix;
+
+    const price = prices[priceKey] || 0;
+    console.log("Prix calculé :", priceKey, "→", price); // Debug temporaire
+
+    setTotalPrice(price);
+  }, [selectedCourses, formData?.courseType, formData?.ageGroup]);
+
+  // Important : on dépend aussi de ageGroup ici ↑
 
   const handleSelectCourse = (day, course) => {
     setSelectedCourses((prev) => ({
@@ -80,32 +80,36 @@ const Classic = ({
       return;
     }
 
-    let type = formData?.courseType;
-    let maxCourses = 1;
-    if (type === "trimestre" || type === "semestre") {
-      maxCourses = 3;
-    }
-
-    if (selectedCount > maxCourses) {
-      alert(`Vous ne pouvez sélectionner que ${maxCourses} cours au maximum.`);
+    if ((formData.courseType === "trimestre" || formData.courseType === "semestre") && selectedCount > 3) {
+      alert("Vous ne pouvez sélectionner que 3 cours maximum pour trimestre/semestre.");
       return;
     }
 
-    onNext({ classicCourses: selectedCourses, totalPrice });
+    // Recalcul final (sécurité)
+    const isChild = formData.ageGroup === "enfant";
+    const type = formData.courseType;
+    let prefix = "";
+    if (type === "trimestre") prefix = selectedCount === 1 ? "trimester" : `trimester${selectedCount}`;
+    else if (type === "semestre") prefix = selectedCount === 1 ? "semester" : `semester${selectedCount}`;
+    else if (type === "annee") prefix = selectedCount === 1 ? "year" : `year${selectedCount}`;
+
+    const finalPrice = prices[prefix + (isChild ? "_child" : "_adult")] || 0;
+
+    onNext({
+      classicCourses: selectedCourses,
+      totalPrice: finalPrice,
+      duration: formData.courseType,        // important pour Stripe
+      nbCoursesPerWeek: selectedCount,      // très important
+    });
   };
 
   const getStepIcon = () => {
     switch (stepNumber) {
-      case 1:
-        return <PiNumberCircleOneThin className="stepIcon" />;
-      case 2:
-        return <PiNumberCircleTwoThin className="stepIcon" />;
-      case 3:
-        return <PiNumberCircleThreeThin className="stepIcon" />;
-      case 4:
-        return <PiNumberCircleFourThin className="stepIcon" />;
-      default:
-        return null;
+      case 1: return <PiNumberCircleOneThin className="stepIcon" />;
+      case 2: return <PiNumberCircleTwoThin className="stepIcon" />;
+      case 3: return <PiNumberCircleThreeThin className="stepIcon" />;
+      case 4: return <PiNumberCircleFourThin className="stepIcon" />;
+      default: return null;
     }
   };
 
@@ -130,9 +134,7 @@ const Classic = ({
                   .map((course, index) => (
                     <label
                       key={index}
-                      className={`courseItem ${
-                        selectedCourses[day] === course ? "selected" : ""
-                      }`}
+                      className={`courseItem ${selectedCourses[day] === course ? "selected" : ""}`}
                     >
                       <input
                         type="checkbox"
@@ -142,9 +144,7 @@ const Classic = ({
                       <span className="checkbox-custom">
                         {selectedCourses[day] === course && <AiOutlineCheck />}
                       </span>
-                      <span>
-                        {course.date} - {course.time} - {course.place}
-                      </span>
+                      <span>{course.date} - {course.time} - {course.place}</span>
                     </label>
                   ))}
               </div>

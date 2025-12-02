@@ -112,35 +112,43 @@ const Recap = ({
 
   const getStripePriceId = () => {
     if (dataType !== "courses") return null;
-
+  
+    // === COURS D'ESSAI ===
     if (formData.courseType === "essai") {
       return import.meta.env.VITE_PRICE_COURSE_TRIAL;
     }
-
-    const duration = formData.duration;
-    const nbCours = formData.nbCoursesPerWeek;
-
-    if (!duration || !nbCours) return null;
-
-    if (duration === "trimester") {
-      if (nbCours === 1) return import.meta.env.VITE_PRICE_TRIMESTER_1;
-      if (nbCours === 2) return import.meta.env.VITE_PRICE_TRIMESTER_2;
-      if (nbCours === 3) return import.meta.env.VITE_PRICE_TRIMESTER_3;
+  
+    // === COURS RÉGULIERS ===
+    const ageGroup = formData.ageGroup;
+    const isChild = ageGroup === "enfant" || ageGroup === "Enfant";
+  
+    // Normalisation du duration (français → anglais)
+    const durationMap = {
+      trimestre: "TRIMESTER",
+      semestre: "SEMESTER",
+      annee: "YEAR",
+    };
+  
+    const durationKey = formData.duration || formData.courseType; // fallback au cas où
+    const normalizedDuration = durationMap[durationKey];
+  
+    if (!normalizedDuration) {
+      console.error("Durée non reconnue :", durationKey);
+      return null;
     }
-
-    if (duration === "semester") {
-      if (nbCours === 1) return import.meta.env.VITE_PRICE_SEMESTER_1;
-      if (nbCours === 2) return import.meta.env.VITE_PRICE_SEMESTER_2;
-      if (nbCours === 3) return import.meta.env.VITE_PRICE_SEMESTER_3;
+  
+    const nb = formData.nbCoursesPerWeek;
+    if (!nb || nb < 1 || nb > 3) {
+      console.error("Nombre de cours par semaine invalide :", nb);
+      return null;
     }
-
-    if (duration === "year") {
-      if (nbCours === 1) return import.meta.env.VITE_PRICE_YEAR_1;
-      if (nbCours === 2) return import.meta.env.VITE_PRICE_YEAR_2;
-      if (nbCours === 3) return import.meta.env.VITE_PRICE_YEAR_3;
-    }
-
-    return null;
+  
+    const type = isChild ? "CHILD" : "ADULT";
+    const key = `VITE_PRICE_${normalizedDuration}_${nb}_${type}`;
+  
+    console.log("Price ID recherché :", key, "→", import.meta.env[key]);
+  
+    return import.meta.env[key] || null;
   };
 
   return (

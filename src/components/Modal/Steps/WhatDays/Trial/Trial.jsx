@@ -44,7 +44,13 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
       return;
     }
     const selectedCourse = trialCourses[selectedDateIndex];
-    onNext({ trialCourse: selectedCourse });
+  
+    onNext({
+      trialCourse: selectedCourse,
+      totalPrice: 10,
+      courseType: "essai",
+      duration: "trial",
+    });
   };
 
   return (

@@ -54,7 +54,13 @@ const PersonnalInfos = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext(formData);
+    onNext({
+      nom: formData.nom,
+      telephone: formData.telephone,
+      email: formData.email,
+      message: formData.message,
+      ...(isNumberSelector && { nombreParticipants: formData.nombreParticipants }),
+    });
   };
 
   return (
