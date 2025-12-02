@@ -16,41 +16,47 @@ const Recap = ({
 
   const handleReserve = async () => {
     try {
-      let items = []; // Nouveau format : tableau d'items pour Stripe
-
-      // === STAGES ===
+      let items = []; // Tableau d'items envoyé à Stripe
+  
+      // === STAGES → 1 ligne par participant (comme les spectacles) ===
       if (dataType === "traineeship") {
-        items = [
-          {
-            price: import.meta.env.VITE_PRICE_TRAINEESHIP,
-            quantity: formData.nombreParticipants || 1,
-          },
-        ];
+        const stagePriceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
+        const nbParticipants = formData.nombreParticipants || 1;
+  
+        if (!stagePriceId) {
+          alert("Erreur : prix du stage manquant (VITE_PRICE_TRAINEESHIP)");
+          return;
+        }
+  
+        // On ajoute une ligne séparée pour chaque participant
+        for (let i = 0; i < nbParticipants; i++) {
+          items.push({ price: stagePriceId, quantity: 1 });
+        }
       }
-
+  
       // === SPECTACLES → 2 produits séparés (adulte / enfant) ===
       else if (dataType === "show") {
         const adultPriceId = import.meta.env.VITE_PRICE_SHOW_ADULT;
         const childPriceId = import.meta.env.VITE_PRICE_SHOW_CHILD;
-
+  
         if (!adultPriceId || !childPriceId) {
           alert("Erreur : prix adulte ou enfant manquant dans les variables d'environnement.");
           return;
         }
-
+  
         if (formData.adultes > 0) {
           items.push({ price: adultPriceId, quantity: formData.adultes });
         }
         if (formData.enfants > 0) {
           items.push({ price: childPriceId, quantity: formData.enfants });
         }
-
+  
         if (items.length === 0) {
           alert("Veuillez sélectionner au moins une place.");
           return;
         }
       }
-
+  
       // === COURS (essai ou réguliers) ===
       else if (dataType === "courses") {
         const priceId = getStripePriceId();
@@ -60,33 +66,33 @@ const Recap = ({
         }
         items = [{ price: priceId, quantity: 1 }];
       }
-
+  
       const eventData = Array.isArray(data) ? data[0] : data;
-
+  
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items, // ← Stripe accepte un tableau → parfait pour 2 prix différents
+          items,
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-
+  
             nom: formData.nom,
             email: formData.email,
             telephone: formData.telephone,
-
+  
             nombreParticipants: formData.nombreParticipants?.toString() || "",
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
-
+  
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
-
+  
             trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
             classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
-
+  
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
@@ -94,15 +100,15 @@ const Recap = ({
           },
         }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erreur serveur");
       }
-
+  
       const { url } = await response.json();
       if (!url) throw new Error("URL de paiement non générée.");
-
+  
       window.location.href = url;
     } catch (err) {
       console.error("Erreur paiement :", err);
