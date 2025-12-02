@@ -51,36 +51,33 @@ const Recap = ({
           quantity,
           customerEmail: formData.email,
           metadata: {
-            // Type de réservation
             type: dataType,
-  
-            // Infos client
+          
             nom: formData.nom,
             email: formData.email,
             telephone: formData.telephone,
-  
-            // === STAGES ===
+          
             nombreParticipants: formData.nombreParticipants?.toString(),
-  
-            // === SPECTACLES ===
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
-  
-            // === COURS ===
+          
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
+          
+            // On garde que les infos utiles du cours d'essai
             trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
+            // classicCourses : tu peux garder, c'est ~300-400 chars max → OK pour Stripe
             classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
-  
-            // === ÉVÉNEMENT (stage, spectacle, etc.) ===
+          
+            // Événement : que les champs utiles
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
             eventHours: eventData?.hours || "",
-  
-            // Optionnel : stringify tout l'objet event si tu veux être sûr
-            eventData: JSON.stringify(eventData),
+          
+            // SUPPRIME CETTE LIGNE → C'EST ELLE QUI TUE TOUT
+            // eventData: JSON.stringify(eventData),
           },
         }),
       });
