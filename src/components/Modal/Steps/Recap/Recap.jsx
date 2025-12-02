@@ -2,7 +2,6 @@ import React from "react";
 import { PiNumberCircleOneThin, PiNumberCircleTwoThin } from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
 import "./recap.scss";
-import { loadStripe } from "@stripe/stripe-js"; // Gardé, mais pas utilisé pour la redirection
 
 const Recap = ({
   formData,
@@ -13,92 +12,105 @@ const Recap = ({
   onReserve,
   showPrevButton,
 }) => {
-  console.log(formData, data);
+  console.log("Recap → formData :", formData, "dataType :", dataType);
 
   const handleReserve = async () => {
     try {
-      let priceId = null;
-  
+      let items = []; // Nouveau format : tableau d'items pour Stripe
+
+      // === STAGES ===
       if (dataType === "traineeship") {
-        priceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
-      } else if (dataType === "show") {
-        priceId = import.meta.env.VITE_PRICE_SHOW;
-      } else if (dataType === "courses") {
-        priceId = getStripePriceId();
+        items = [
+          {
+            price: import.meta.env.VITE_PRICE_TRAINEESHIP,
+            quantity: formData.nombreParticipants || 1,
+          },
+        ];
       }
-  
-      if (!priceId) {
-        alert("Erreur : aucun prix configuré pour cette réservation.");
-        return;
+
+      // === SPECTACLES → 2 produits séparés (adulte / enfant) ===
+      else if (dataType === "show") {
+        const adultPriceId = import.meta.env.VITE_PRICE_SHOW_ADULT;
+        const childPriceId = import.meta.env.VITE_PRICE_SHOW_CHILD;
+
+        if (!adultPriceId || !childPriceId) {
+          alert("Erreur : prix adulte ou enfant manquant dans les variables d'environnement.");
+          return;
+        }
+
+        if (formData.adultes > 0) {
+          items.push({ price: adultPriceId, quantity: formData.adultes });
+        }
+        if (formData.enfants > 0) {
+          items.push({ price: childPriceId, quantity: formData.enfants });
+        }
+
+        if (items.length === 0) {
+          alert("Veuillez sélectionner au moins une place.");
+          return;
+        }
       }
-  
-      const quantity =
-        dataType === "traineeship"
-          ? formData.nombreParticipants
-          : dataType === "show"
-          ? (formData.adultes || 0) + (formData.enfants || 0)
-          : 1;
-  
-      // On récupère les vraies données de l'événement (stage, spectacle...)
+
+      // === COURS (essai ou réguliers) ===
+      else if (dataType === "courses") {
+        const priceId = getStripePriceId();
+        if (!priceId) {
+          alert("Erreur : aucun prix configuré pour ce cours.");
+          return;
+        }
+        items = [{ price: priceId, quantity: 1 }];
+      }
+
       const eventData = Array.isArray(data) ? data[0] : data;
-  
-      // ENVOIE TOUT CE QU'IL FAUT DANS METADATA
+
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          priceId,
-          quantity,
+          items, // ← Stripe accepte un tableau → parfait pour 2 prix différents
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-          
+
             nom: formData.nom,
             email: formData.email,
             telephone: formData.telephone,
-          
-            nombreParticipants: formData.nombreParticipants?.toString(),
+
+            nombreParticipants: formData.nombreParticipants?.toString() || "",
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
-          
+
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
-          
-            // On garde que les infos utiles du cours d'essai
+
             trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
-            // classicCourses : tu peux garder, c'est ~300-400 chars max → OK pour Stripe
             classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
-          
-            // Événement : que les champs utiles
+
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
             eventHours: eventData?.hours || "",
-          
-            // SUPPRIME CETTE LIGNE → C'EST ELLE QUI TUE TOUT
-            // eventData: JSON.stringify(eventData),
           },
         }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erreur serveur");
       }
-  
+
       const { url } = await response.json();
       if (!url) throw new Error("URL de paiement non générée.");
-  
-      // Redirection vers Stripe Checkout
+
       window.location.href = url;
     } catch (err) {
-      console.error("Erreur :", err);
+      console.error("Erreur paiement :", err);
       alert("Une erreur est survenue : " + err.message);
     }
   };
 
-  // Calcul du total pour les spectacles
+  // Calcul du total pour affichage (spectacles)
   const calculateShowTotal = () => {
     const adultes = formData.adultes || 0;
     const enfants = formData.enfants || 0;
@@ -107,44 +119,40 @@ const Recap = ({
 
   const eventData = Array.isArray(data) ? data[0] : data;
 
+  // === Gestion des priceId pour les cours ===
   const getStripePriceId = () => {
     if (dataType !== "courses") return null;
-  
-    // === COURS D'ESSAI ===
+
     if (formData.courseType === "essai") {
       return import.meta.env.VITE_PRICE_COURSE_TRIAL;
     }
-  
-    // === COURS RÉGULIERS ===
-    const ageGroup = formData.ageGroup;
-    const isChild = ageGroup === "enfant" || ageGroup === "Enfant";
-  
-    // Normalisation du duration (français → anglais)
+
+    const isChild = formData.ageGroup === "enfant" || formData.ageGroup === "Enfant";
+
     const durationMap = {
       trimestre: "TRIMESTER",
       semestre: "SEMESTER",
       annee: "YEAR",
     };
-  
-    const durationKey = formData.duration || formData.courseType; // fallback au cas où
+
+    const durationKey = formData.duration || formData.courseType;
     const normalizedDuration = durationMap[durationKey];
-  
+
     if (!normalizedDuration) {
       console.error("Durée non reconnue :", durationKey);
       return null;
     }
-  
+
     const nb = formData.nbCoursesPerWeek;
     if (!nb || nb < 1 || nb > 3) {
       console.error("Nombre de cours par semaine invalide :", nb);
       return null;
     }
-  
+
     const type = isChild ? "CHILD" : "ADULT";
     const key = `VITE_PRICE_${normalizedDuration}_${nb}_${type}`;
-  
-    console.log("Price ID recherché :", key, "→", import.meta.env[key]);
-  
+
+    console.log("Price ID cours →", key, "=", import.meta.env[key]);
     return import.meta.env[key] || null;
   };
 
@@ -158,8 +166,10 @@ const Recap = ({
         ) : null}
         <h2>Résumé de votre commande</h2>
       </div>
+
       <div className="containerAllRecap">
         <div className="containerRecapObject">
+          {/* === STAGES === */}
           {dataType === "traineeship" && (
             <>
               <p>Stage :</p>
@@ -175,6 +185,8 @@ const Recap = ({
               </p>
             </>
           )}
+
+          {/* === SPECTACLES === */}
           {dataType === "show" && (
             <>
               <p>Spectacle :</p>
@@ -198,12 +210,15 @@ const Recap = ({
               <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>
           )}
+
+          {/* === COURS === */}
           {dataType === "courses" && (
             <>
               <p>Cours :</p>
               <ul>
                 <li>Catégorie d’âge : {formData.ageGroup}</li>
                 <li>Type de cours : {formData.courseType}</li>
+
                 {formData.courseType === "essai" && formData.trialCourse && (
                   <>
                     <li>Date du cours : {formData.trialCourse.date}</li>
@@ -211,18 +226,16 @@ const Recap = ({
                     <li>Lieu : {formData.trialCourse.place}</li>
                   </>
                 )}
+
                 {formData.courseType !== "essai" && formData.classicCourses && (
                   <>
-                    <li>
-                      <strong>Cours sélectionnés :</strong>
-                    </li>
+                    <li><strong>Cours sélectionnés :</strong></li>
                     <ul>
                       {Object.entries(formData.classicCourses)
                         .filter(([, course]) => course)
                         .map(([day, course], index) => (
                           <li key={index}>
-                            <strong>{day} :</strong> {course.date} – {course.time} –{" "}
-                            {course.place}
+                            <strong>{day} :</strong> {course.date} – {course.time} – {course.place}
                           </li>
                         ))}
                     </ul>
@@ -235,6 +248,7 @@ const Recap = ({
             </>
           )}
         </div>
+
         <div className="containerUserRecap">
           <p>Vos informations :</p>
           <ul>
@@ -245,10 +259,11 @@ const Recap = ({
           </ul>
         </div>
       </div>
+
       <div className="buttons-group">
         {showPrevButton && (
           <button type="button" onClick={onPrev} className="btn-prev-step">
-            <HiArrowLongRight />
+            <HiArrowLongRight style={{ transform: "rotate(180deg)" }} />
             Précédent
           </button>
         )}
