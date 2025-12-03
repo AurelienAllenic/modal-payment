@@ -10,7 +10,7 @@ const ButtonModal = ({ text, data, dataType }) => {
   const [loading, setLoading] = useState(true);
 
   // eventId uniquement pour les stages → format attendu : stage-2025-07-15
-  const eventId = dataType === "traineeship" ? `stage-${data.date}` : null;
+  const eventId = dataType === "traineeship" ? `traineeship-${data.date}` : null;
 
   // Chargement des places disponibles
   useEffect(() => {
