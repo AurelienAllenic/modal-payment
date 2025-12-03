@@ -1,40 +1,62 @@
 // src/pages/AdminCapacities.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./adminCapacity.scss";
+import "./AdminCapacities.css";
 
 const AdminCapacities = () => {
   const [capacities, setCapacities] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchCapacities = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/capacities`);
+      const data = await res.json();
+      setCapacities(data);
+      setLoading(false);
+    } catch (err) {
+    }
+  };
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/capacities`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCapacities(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert("Erreur chargement des capacités");
-        setLoading(false);
-      });
+    fetchCapacities();
   }, []);
 
-  const updateCapacity = async (eventId, newMax) => {
-    if (newMax < 0) return;
+  const updateCapacity = async (eventId, maxPlaces) => {
+    if (maxPlaces < 0) return;
 
     await fetch(`${import.meta.env.VITE_API_URL || ""}/api/admin/capacity/update`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ eventId, maxPlaces: newMax }),
+      body: JSON.stringify({ eventId, maxPlaces: parseInt(maxPlaces) }),
     });
 
+    // Mise à jour locale sans reload
     setCapacities(prev =>
-      prev.map(c =>
-        c.eventId === eventId ? { ...c, maxPlaces: newMax } : c
-      )
+      prev.map(c => c.eventId === eventId ? { ...c, maxPlaces } : c)
     );
+  };
+
+  const createNew = async () => {
+    const eventId = document.getElementById("newId").value.trim();
+    const maxPlaces = parseInt(document.getElementById("newMax").value) || 0;
+
+    if (!eventId || !maxPlaces) {
+      alert("eventId et places max requis");
+      return;
+    }
+
+    await updateCapacity(eventId, maxPlaces);
+    
+    // On vide les champs
+    document.getElementById("newId").value = "";
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newDate").value = "";
+    document.getElementById("newType").value = "";
+    document.getElementById("newMax").value = "";
+
+    // On rafraîchit proprement
+    fetchCapacities();
   };
 
   if (loading) return <div className="admin-loading">Chargement...</div>;
@@ -45,30 +67,26 @@ const AdminCapacities = () => {
         ← Retour
       </button>
       <h1>Gérer les capacités</h1>
-      <p>Modifie le nombre max de places pour chaque événement</p>
 
       <div className="capacities-list">
         {capacities.length === 0 ? (
-          <p>Aucun événement trouvé. Crée-les via le seed ou manuellement.</p>
+          <p>Aucun événement → crée-en un ci-dessous</p>
         ) : (
           capacities.map((c) => (
             <div key={c.eventId} className="capacity-item">
               <div className="event-info">
                 <strong>{c.title || c.eventId}</strong>
                 <br />
-                <small>
-                  {c.date} • {c.type} • Réservées : {c.bookedPlaces}
-                </small>
+                <small>{c.date || "—"} • {c.type || "—"} • Réservées: {c.bookedPlaces || 0}</small>
               </div>
               <div className="capacity-control">
-                <button onClick={() => updateCapacity(c.eventId, (c.maxPlaces || 0) - 1)}>-</button>
+                <button onClick={() => updateCapacity(c.eventId, c.maxPlaces - 1)}>-</button>
                 <input
                   type="number"
                   value={c.maxPlaces || 0}
                   onChange={(e) => updateCapacity(c.eventId, parseInt(e.target.value) || 0)}
-                  min="0"
                 />
-                <button onClick={() => updateCapacity(c.eventId, (c.maxPlaces || 0) + 1)}>+</button>
+                <button onClick={() => updateCapacity(c.eventId, c.maxPlaces + 1)}>+</button>
               </div>
             </div>
           ))
@@ -76,28 +94,13 @@ const AdminCapacities = () => {
       </div>
 
       <div className="add-new">
-        <h3>Ajouter un nouvel événement</h3>
-        <input placeholder="eventId (ex: stage-2025-12-20)" id="newId" />
-        <input placeholder="Titre" id="newTitle" />
-        <input placeholder="Date (YYYY-MM-DD)" id="newDate" />
-        <input placeholder="Type (traineeship/show/courses)" id="newType" />
+        <h3>Ajouter un événement</h3>
+        <input placeholder="eventId (ex: show-2025-12-13)" id="newId" />
+        <input placeholder="Titre (facultatif)" id="newTitle" />
+        <input placeholder="Date YYYY-MM-DD (facultatif)" id="newDate" />
+        <input placeholder="Type (facultatif)" id="newType" />
         <input type="number" placeholder="Places max" id="newMax" />
-        <button
-          onClick={() => {
-            const eventId = document.getElementById("newId").value;
-            const title = document.getElementById("newTitle").value;
-            const date = document.getElementById("newDate").value;
-            const type = document.getElementById("newType").value;
-            const maxPlaces = parseInt(document.getElementById("newMax").value) || 0;
-
-            if (eventId && type) {
-              updateCapacity(eventId, maxPlaces);
-              setTimeout(() => window.location.reload(), 500);
-            }
-          }}
-        >
-          Créer
-        </button>
+        <button onClick={createNew}>Créer</button>
       </div>
     </div>
   );
