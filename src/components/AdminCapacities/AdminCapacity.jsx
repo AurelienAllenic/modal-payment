@@ -15,7 +15,7 @@ const AdminCapacity = () => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000); // 8s max
 
-      const res = await fetch(`${API_URL}/api/admin/capacities`, {
+      const res = await fetch(`${API_URL}/admin/capacities`, {
         signal: controller.signal,
       });
 
