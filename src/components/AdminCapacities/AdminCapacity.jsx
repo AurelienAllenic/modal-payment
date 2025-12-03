@@ -41,7 +41,7 @@ const AdminCapacity = () => {
     if (!eventId || !maxPlaces) return alert("eventId et places requis");
 
     try {
-      await fetch(`${API_URL}/api/admin/capacity/update`, {
+      await fetch(`${API_URL}/admin/capacity/update`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ eventId, maxPlaces: Number(maxPlaces) }),
