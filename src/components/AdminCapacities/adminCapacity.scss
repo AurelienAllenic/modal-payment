@@ -1,0 +1,59 @@
+.admin-container {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .back-btn {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2rem;
+  }
+  
+  .capacity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .capacity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .capacity-control button {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+  
+  .capacity-control input {
+    width: 80px;
+    text-align: center;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .add-new {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: #f0f8ff;
+    border-radius: 12px;
+  }
+  
+  .add-new input {
+    margin: 0.5rem;
+    padding: 8px;
+    width: 200px;
+  }

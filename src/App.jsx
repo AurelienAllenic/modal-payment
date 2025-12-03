@@ -10,6 +10,7 @@ import {
 } from "./components/data/Data.js";
 import Cases from "./Cases.jsx";
 import OrdersList from "./components/OrdersList/OrdersList.jsx";
+import AdminCapacities from "./components/AdminCapacities/AdminCapacity.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/orders-list" element={<OrdersList />} />
+        <Route path="/admin-capacities" element={<AdminCapacities />} />
         <Route
           path="/traineeship-reservation"
           element={<Cases data={traineeship} type="traineeship" />}

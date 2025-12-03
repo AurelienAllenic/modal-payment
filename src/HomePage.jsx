@@ -22,6 +22,9 @@ const HomePage = () => {
         <button onClick={() => navigate("/orders-list")}>
           Voir la liste des commandes
         </button>
+        <button onClick={() => navigate("/admin-capacities")}>
+          Modifier le nombre de places disponibles
+        </button>
       </div>
     </div>
   );
