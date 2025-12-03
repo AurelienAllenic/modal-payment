@@ -1,7 +1,7 @@
 // src/pages/AdminCapacities.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./AdminCapacity.scss";
+import "./adminCapacity.scss";
 
 const AdminCapacities = () => {
   const [capacities, setCapacities] = useState([]);
