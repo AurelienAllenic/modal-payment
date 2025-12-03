@@ -6,6 +6,7 @@ export const traineeship = {
 };
 
 export const show = {
+  id: "show-2025-12-13",
   title: "Tap Show",
   date: "13/12/2025",
   place: "Salle des deux moulins",
