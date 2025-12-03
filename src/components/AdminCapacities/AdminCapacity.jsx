@@ -1,9 +1,9 @@
 // src/pages/AdminCapacities.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./AdminCapacities.css";
+import "./adminCapacity.scss";
 
-const AdminCapacities = () => {
+const AdminCapacity = () => {
   const [capacities, setCapacities] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -106,4 +106,4 @@ const AdminCapacities = () => {
   );
 };
 
-export default AdminCapacities;
+export default AdminCapacity;
