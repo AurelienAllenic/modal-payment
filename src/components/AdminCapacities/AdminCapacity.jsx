@@ -7,7 +7,7 @@ const AdminCapacity = () => {
   const [capacities, setCapacities] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4242";
+  const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:4242";
 
   // Fonction de fetch avec timeout et fallback
   const fetchCapacities = async () => {
