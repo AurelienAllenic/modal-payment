@@ -38,7 +38,10 @@ const AdminCapacity = () => {
   }, []);
 
   const saveEvent = async (eventId, maxPlaces) => {
-    if (!eventId || !maxPlaces) return alert("eventId et places requis");
+    if (!eventId || maxPlaces === "" || isNaN(Number(maxPlaces))) {
+        return alert("eventId et places requis");
+      }
+      
 
     try {
       await fetch(`${API_URL}/admin/capacity/update`, {
