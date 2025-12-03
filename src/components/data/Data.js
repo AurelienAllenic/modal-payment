@@ -1,5 +1,5 @@
 export const traineeship = {
-  id: "traineeship-2025-12-13",
+  id: "stage-2025-12-13",
   title: "Initiation débutant",
   date: "13/12/2025",
   place: "Salle de l'Aljad",
