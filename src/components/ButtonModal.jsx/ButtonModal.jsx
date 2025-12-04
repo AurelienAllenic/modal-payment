@@ -1,5 +1,5 @@
 // ButtonModal.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const ButtonModal = ({ text, data, dataType, Modal }) => {
   const [showModal, setShowModal] = useState(false);
@@ -14,6 +14,17 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   const [fetchedData, setFetchedData] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Normalise l'URL de base pour éviter les /api doublés ou manquants
+  const API_BASE_URL = useMemo(() => {
+    const raw = import.meta.env.VITE_BACKEND_URL || "";
+    const base = raw.replace(/\/+$/, ""); // supprime les / en trop à la fin
+    // Si l'URL se termine déjà par /api, on la garde telle quelle,
+    // sinon on ajoute /api
+    const finalUrl = base.endsWith("/api") ? base : `${base}/api`;
+    console.log("[ButtonModal] API_BASE_URL utilisé :", finalUrl);
+    return finalUrl;
+  }, []);
+
   useEffect(() => {
     const fetchCapacities = async () => {
       setLoading(true);
@@ -21,7 +32,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 1. Traineeship
         if (dataType === "traineeship") {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/traineeships`);
+          const res = await fetch(`${API_BASE_URL}/traineeships`);
           const list = await res.json();
           const event = list[0]; // ⭐ PRENDRE LE PREMIER
   
@@ -45,7 +56,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 2. Show
         if (dataType === "show") {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows`);
+          const res = await fetch(`${API_BASE_URL}/shows`);
           const data = await res.json();
           console.log("data brute shows :", data);
           const event = Array.isArray(data) ? data[0] : data;
@@ -71,7 +82,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 3. Trial courses
         if (dataType === "courses") {
-          const trialRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trial-courses`);
+          const trialRes = await fetch(`${API_BASE_URL}/trial-courses`);
           const trials = await trialRes.json();
   
           const trialCapacities = trials.map(course => ({
@@ -85,7 +96,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
           setTrialCoursesCapacity(trialCapacities);
   
           // Classic courses
-          const classicRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/classic-courses`);
+          const classicRes = await fetch(`${API_BASE_URL}/classic-courses`);
           const classics = await classicRes.json();
   
           const classicCapacities = classics.map(course => ({
