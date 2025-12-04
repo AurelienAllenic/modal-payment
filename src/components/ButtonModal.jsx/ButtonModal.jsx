@@ -41,6 +41,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
               traineeship: event, 
               traineeshipCapacity: cap 
             }));
+            console.log("fetchedData :", fetchedData);
           }
         }
 
@@ -67,6 +68,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
               showCapacity: cap 
             }));
           }
+          console.log("fetchedData :", fetchedData);
         }
 
         // 3. COURS : on charge TOUT (essai + réguliers)
@@ -98,6 +100,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
                 trialCapacities
               }
             }));
+            console.log("fetchedData :", fetchedData);
           }
         
           // Cours classiques
@@ -127,6 +130,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
                 classicCapacities
               }
             }));
+            console.log("fetchedData :", fetchedData);
           }
         }
 
