@@ -56,12 +56,25 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 2. Show
         if (dataType === "show") {
-          const res = await fetch(`${API_BASE_URL}/shows`);
+          const showUrl = `${API_BASE_URL}/shows`;
+          console.log("[SHOW] URL appelée :", showUrl);
+          const res = await fetch(showUrl);
+          console.log("[SHOW] Statut HTTP :", res.status, res.statusText);
+          
+          if (!res.ok) {
+            console.error("[SHOW] Erreur HTTP :", res.status, res.statusText);
+            const errorText = await res.text();
+            console.error("[SHOW] Réponse erreur :", errorText);
+            throw new Error(`Erreur fetch shows: ${res.status}`);
+          }
+          
           const data = await res.json();
-          console.log("data brute shows :", data);
+          console.log("[SHOW] Réponse brute (type):", typeof data, "| (isArray):", Array.isArray(data), "| (length):", Array.isArray(data) ? data.length : "N/A");
+          console.log("[SHOW] Réponse brute complète :", JSON.stringify(data, null, 2));
+          
           const event = Array.isArray(data) ? data[0] : data;
-          console.log("event extrait :", event);
-  
+          console.log("[SHOW] Event extrait :", event);
+
           if (event) {
             const cap = {
               total: event.numberOfPlaces || 0,
@@ -69,50 +82,79 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
               available: Math.max(0, (event.numberOfPlaces || 0) - (event.bookedPlaces || 0)),
               isFull: (event.numberOfPlaces || 0) - (event.bookedPlaces || 0) <= 0
             };
-  
+
             setShowCapacity(cap);
             const nextFetched = {
               show: event,
               showCapacity: cap,
             };
             setFetchedData(prev => ({ ...prev, ...nextFetched }));
-            console.log("fetchedData show (local) :", nextFetched);
+            console.log("[SHOW] fetchedData show (local) :", nextFetched);
+          } else {
+            console.warn("[SHOW] Aucun event trouvé dans la réponse");
           }
         }
   
         // 3. Trial courses
         if (dataType === "courses") {
-          const trialRes = await fetch(`${API_BASE_URL}/trial-courses`);
+          // Trial courses
+          const trialUrl = `${API_BASE_URL}/trial-courses`;
+          console.log("[TRIAL] URL appelée :", trialUrl);
+          const trialRes = await fetch(trialUrl);
+          console.log("[TRIAL] Statut HTTP :", trialRes.status, trialRes.statusText);
+          
+          if (!trialRes.ok) {
+            console.error("[TRIAL] Erreur HTTP :", trialRes.status, trialRes.statusText);
+            const errorText = await trialRes.text();
+            console.error("[TRIAL] Réponse erreur :", errorText);
+            throw new Error(`Erreur fetch trial-courses: ${trialRes.status}`);
+          }
+          
           const trials = await trialRes.json();
-  
-          const trialCapacities = trials.map(course => ({
+          console.log("[TRIAL] Réponse brute (type):", typeof trials, "| (isArray):", Array.isArray(trials), "| (length):", Array.isArray(trials) ? trials.length : "N/A");
+          console.log("[TRIAL] Réponse brute complète :", JSON.stringify(trials, null, 2));
+
+          const trialCapacities = Array.isArray(trials) ? trials.map(course => ({
             id: course._id,
             total: course.numberOfPlaces || 0,
             booked: course.bookedPlaces || 0,
             available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
             isFull: (course.numberOfPlaces || 0) - (course.bookedPlaces || 0) <= 0,
-          }));
-  
+          })) : [];
+
           setTrialCoursesCapacity(trialCapacities);
-  
+
           // Classic courses
-          const classicRes = await fetch(`${API_BASE_URL}/classic-courses`);
+          const classicUrl = `${API_BASE_URL}/classic-courses`;
+          console.log("[CLASSIC] URL appelée :", classicUrl);
+          const classicRes = await fetch(classicUrl);
+          console.log("[CLASSIC] Statut HTTP :", classicRes.status, classicRes.statusText);
+          
+          if (!classicRes.ok) {
+            console.error("[CLASSIC] Erreur HTTP :", classicRes.status, classicRes.statusText);
+            const errorText = await classicRes.text();
+            console.error("[CLASSIC] Réponse erreur :", errorText);
+            throw new Error(`Erreur fetch classic-courses: ${classicRes.status}`);
+          }
+          
           const classics = await classicRes.json();
-  
-          const classicCapacities = classics.map(course => ({
+          console.log("[CLASSIC] Réponse brute (type):", typeof classics, "| (isArray):", Array.isArray(classics), "| (length):", Array.isArray(classics) ? classics.length : "N/A");
+          console.log("[CLASSIC] Réponse brute complète :", JSON.stringify(classics, null, 2));
+
+          const classicCapacities = Array.isArray(classics) ? classics.map(course => ({
             id: course._id,
             total: course.numberOfPlaces || 0,
             booked: course.bookedPlaces || 0,
             available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
             isFull: (course.numberOfPlaces || 0) - (course.bookedPlaces || 0) <= 0,
-          }));
-  
+          })) : [];
+
           setClassicCoursesCapacity(classicCapacities);
-  
+
           const nextFetched = {
             courses: {
-              trials,
-              classics
+              trials: Array.isArray(trials) ? trials : [],
+              classics: Array.isArray(classics) ? classics : []
             },
             capacities: {
               trialCapacities,
@@ -121,7 +163,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
           };
 
           setFetchedData(prev => ({ ...prev, ...nextFetched }));
-          console.log("fetchedData courses (local) :", nextFetched);
+          console.log("[COURSES] fetchedData courses (local) :", nextFetched);
         }
   
       } catch (error) {
