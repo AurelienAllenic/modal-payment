@@ -35,6 +35,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
             setTraineeshipCapacity(cap);
             setFetchedData({ traineeship: event, traineeshipCapacity: cap });
+            console.log("fetchedData :", fetchedData);
           }
         }
   
@@ -54,6 +55,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
             setShowCapacity(cap);
             setFetchedData({ show: event, showCapacity: cap });
+            console.log("fetchedData :", fetchedData);
           }
         }
   
@@ -96,6 +98,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
               classicCapacities
             }
           });
+          console.log("fetchedData :", fetchedData);
         }
   
       } catch (error) {
