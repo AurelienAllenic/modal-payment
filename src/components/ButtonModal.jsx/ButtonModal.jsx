@@ -21,11 +21,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 1. Traineeship
         if (dataType === "traineeship") {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/traineeships`);
-          if (!res.ok) {
-            console.error("Erreur fetch /api/traineeships :", res.status, res.statusText);
-            throw new Error("Erreur fetch traineeships");
-          }
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/traineeships`);
           const list = await res.json();
           const event = list[0]; // ⭐ PRENDRE LE PREMIER
   
@@ -49,14 +45,10 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
         // 2. Show
         if (dataType === "show") {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/shows`);
-          if (!res.ok) {
-            console.error("Erreur fetch /api/shows :", res.status, res.statusText);
-            throw new Error("Erreur fetch shows");
-          }
-          const shows = await res.json();
-          console.log("data brute shows :", shows);
-          const event = Array.isArray(shows) ? shows[0] : shows;
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows`);
+          const data = await res.json();
+          console.log("data brute shows :", data);
+          const event = Array.isArray(data) ? data[0] : data;
           console.log("event extrait :", event);
   
           if (event) {
@@ -77,15 +69,10 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
           }
         }
   
-        // 3. Trial + classic courses
+        // 3. Trial courses
         if (dataType === "courses") {
-          const trialRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/trial-courses`);
-          if (!trialRes.ok) {
-            console.error("Erreur fetch /api/trial-courses :", trialRes.status, trialRes.statusText);
-            throw new Error("Erreur fetch trial-courses");
-          }
+          const trialRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trial-courses`);
           const trials = await trialRes.json();
-          console.log("data brute trial-courses :", trials);
   
           const trialCapacities = trials.map(course => ({
             id: course._id,
@@ -98,13 +85,8 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
           setTrialCoursesCapacity(trialCapacities);
   
           // Classic courses
-          const classicRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/classic-courses`);
-          if (!classicRes.ok) {
-            console.error("Erreur fetch /api/classic-courses :", classicRes.status, classicRes.statusText);
-            throw new Error("Erreur fetch classic-courses");
-          }
+          const classicRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/classic-courses`);
           const classics = await classicRes.json();
-          console.log("data brute classic-courses :", classics);
   
           const classicCapacities = classics.map(course => ({
             id: course._id,
