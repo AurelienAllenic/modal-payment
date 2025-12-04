@@ -8,10 +8,46 @@ import ShowReservation from "./Steps/ShowReservation/ShowReservation";
 import CourseType from "./Steps/CourseType/CourseType";
 import WhatDays from "./Steps/WhatDays/WhatDays";
 
-const Modal = ({ dataType, data, onClose, isClosing }) => {
+const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
+
+  console.log("fetchedData :", fetchedData);
+
+  // 🔧 EXTRACTION DES DONNÉES depuis fetchedData
+  const data = React.useMemo(() => {
+    if (dataType === "traineeship") {
+      return {
+        event: fetchedData.traineeship,
+        capacity: fetchedData.traineeshipCapacity,
+      };
+    }
+    if (dataType === "show") {
+      return {
+        event: fetchedData.show,
+        capacity: fetchedData.showCapacity,
+      };
+    }
+    if (dataType === "courses") {
+      return {
+        courses: {
+          trials: fetchedData.courses?.trials || [],
+          classics: fetchedData.courses?.classics || [],
+        },
+        capacities: {
+          trialCapacities: fetchedData.capacities?.trialCapacities || [],
+          classicCapacities: fetchedData.capacities?.classicCapacities || [],
+        },
+      };
+    }
+    return {};
+  }, [dataType, fetchedData]);
+
+  // Helper pour trouver la capacité d'un cours
+  const getCourseCapacity = (courseId, capacitiesArray) => {
+    return capacitiesArray?.find(cap => cap.id === courseId);
+  };
 
   // Réinitialiser le modal quand le dataType change
   useEffect(() => {
@@ -142,6 +178,7 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
             showPrevButton={currentStep > 0}
             data={data}
             initialData={formData}
+            getCourseCapacity={getCourseCapacity}
           />
         );
 
@@ -165,7 +202,8 @@ const Modal = ({ dataType, data, onClose, isClosing }) => {
             onPrev={handlePrevStep}
             initialData={formData}
             showPrevButton={currentStep > 0}
-            show={data}
+            show={data.event}
+            capacity={data.capacity}
           />
         );
 
