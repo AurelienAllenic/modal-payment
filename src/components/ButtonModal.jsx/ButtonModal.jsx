@@ -21,7 +21,8 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
 
         // 1. Stages
         if (dataType === "traineeship" && data?.id) {
-          const res = await fetch(`/api/traineeships/${data.id}`);
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/traineeships/${data.id}`);
+
           if (res.ok) {
             const event = await res.json();
             const total = event.numberOfPlaces || 0;
@@ -47,7 +48,8 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
 
         // 2. Spectacles
         if (dataType === "show" && data?.id) {
-          const res = await fetch(`/api/shows/${data.id}`);
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows/${data.id}`);
+
           if (res.ok) {
             const event = await res.json();
             const total = event.numberOfPlaces || 0;
@@ -74,7 +76,8 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
         // 3. COURS : on charge TOUT (essai + réguliers)
         if (dataType === "courses") {
           // Cours d'essai
-          const trialRes = await fetch(`/api/trial-courses`);
+          const trialRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trial-courses`);
+
           if (trialRes.ok) {
             const trials = await trialRes.json();
         
@@ -104,7 +107,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
           }
         
           // Cours classiques
-          const classicRes = await fetch(`/api/classic-courses`);
+          const classicRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/classic-courses`);
           if (classicRes.ok) {
             const classics = await classicRes.json();
         
