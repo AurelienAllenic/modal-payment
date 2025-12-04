@@ -34,16 +34,22 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
             };
   
             setTraineeshipCapacity(cap);
-            setFetchedData({ traineeship: event, traineeshipCapacity: cap });
-            console.log("fetchedData :", fetchedData);
+            const nextFetched = {
+              traineeship: event,
+              traineeshipCapacity: cap,
+            };
+            setFetchedData(prev => ({ ...prev, ...nextFetched }));
+            console.log("fetchedData traineeship (local) :", nextFetched);
           }
         }
   
         // 2. Show
         if (dataType === "show") {
           const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows`);
-          const list = await res.json();
-          const event = list[0]; // ⭐ PRENDRE LE PREMIER
+          const data = await res.json();
+          console.log("data brute shows :", data);
+          const event = Array.isArray(data) ? data[0] : data;
+          console.log("event extrait :", event);
   
           if (event) {
             const cap = {
@@ -54,8 +60,12 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
             };
   
             setShowCapacity(cap);
-            setFetchedData({ show: event, showCapacity: cap });
-            console.log("fetchedData :", fetchedData);
+            const nextFetched = {
+              show: event,
+              showCapacity: cap,
+            };
+            setFetchedData(prev => ({ ...prev, ...nextFetched }));
+            console.log("fetchedData show (local) :", nextFetched);
           }
         }
   
@@ -88,7 +98,7 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   
           setClassicCoursesCapacity(classicCapacities);
   
-          setFetchedData({
+          const nextFetched = {
             courses: {
               trials,
               classics
@@ -97,8 +107,10 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
               trialCapacities,
               classicCapacities
             }
-          });
-          console.log("fetchedData :", fetchedData);
+          };
+
+          setFetchedData(prev => ({ ...prev, ...nextFetched }));
+          console.log("fetchedData courses (local) :", nextFetched);
         }
   
       } catch (error) {
