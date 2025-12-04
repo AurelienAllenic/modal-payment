@@ -11,8 +11,9 @@ const Success = () => {
 
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
+  const [eventDetails, setEventDetails] = useState(null); // ← Stage ou Spectacle depuis la DB
   const [error, setError] = useState(null);
-  const [copied, setCopied] = useState(false); // ← état pour le bouton copier
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!sessionId) {
@@ -21,30 +22,58 @@ const Success = () => {
       return;
     }
 
-    const fetchSession = async () => {
+    const fetchEverything = async () => {
       try {
+        // 1. Récupération de la session Stripe
         const res = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/retrieve-session?session_id=${sessionId}`
-        );        
+        );
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
         setSession(data);
+
+        const metadata = data.metadata || {};
+        const type = metadata.type;
+
+        // 2. Récupération des détails de l'événement (stage ou spectacle) depuis la DB
+        if ((type === "traineeship" && metadata.traineeshipId) || 
+            (type === "show" && metadata.showId)) {
+          
+          const id = metadata.traineeshipId || metadata.showId;
+          const endpoint = type === "traineeship" ? "traineeships" : "shows";
+
+          const eventRes = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/api/${endpoint}/${id}`
+          );
+
+          if (eventRes.ok) {
+            const event = await eventRes.json();
+            setEventDetails(event);
+          } else {
+            console.warn(`Événement ${type} non trouvé (ID: ${id})`);
+          }
+        }
+
       } catch (err) {
+        console.error(err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSession();
+    fetchEverything();
   }, [sessionId]);
 
   const copyOrderNumber = () => {
-    navigator.clipboard.writeText(session.id);
+    navigator.clipboard.writeText(session?.id || "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // ──────────────────────────────────────────────────────────────
+  // Gestion des cas d'erreur ou chargement
+  // ──────────────────────────────────────────────────────────────
   if (!sessionId || error) {
     return (
       <div className="success-container">
@@ -70,14 +99,13 @@ const Success = () => {
     );
   }
 
-  // === DONNÉES STRIPE ===
+  // ──────────────────────────────────────────────────────────────
+  // Données de base
+  // ──────────────────────────────────────────────────────────────
   const metadata = session.metadata || {};
   const customer = session.customer_details || {};
   const amount = (session.amount_total / 100).toFixed(2);
   const dataType = metadata.type;
-
-  const eventData = metadata.eventData ? JSON.parse(metadata.eventData) : null;
-  const singleEvent = Array.isArray(eventData) ? eventData[0] : eventData;
 
   const formData = {
     nom: metadata.nom || customer.name || "Non renseigné",
@@ -93,13 +121,16 @@ const Success = () => {
     classicCourses: metadata.classicCourses ? JSON.parse(metadata.classicCourses) : null,
   };
 
+  // ──────────────────────────────────────────────────────────────
+  // Rendu final
+  // ──────────────────────────────────────────────────────────────
   return (
     <div className="success-container">
       <div className="success-card">
         <FaCheckCircle className="success-icon" />
         <h1>Réservation confirmée !</h1>
 
-        {/* NUMÉRO DE COMMANDE + BOUTON COPIER */}
+        {/* Numéro de commande + copier */}
         <div className="order-number-wrapper">
           <p className="order-number">
             Numéro de commande : <strong>{session.orderNumber || session.id}</strong>
@@ -135,32 +166,32 @@ const Success = () => {
           </div>
 
           {/* STAGE */}
-          {dataType === "traineeship" && singleEvent && (
+          {dataType === "traineeship" && eventDetails && (
             <div className="detail-section">
               <h3>Détails du stage</h3>
-              <p><strong>{singleEvent.title}</strong></p>
-              <p>{singleEvent.place}</p>
-              <p>{singleEvent.date} • {singleEvent.hours}</p>
+              <p><strong>{eventDetails.title}</strong></p>
+              <p>{eventDetails.place}</p>
+              <p>{eventDetails.date} • {eventDetails.hours}</p>
               <p>Participants : {formData.nombreParticipants}</p>
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
             </div>
           )}
 
           {/* SPECTACLE */}
-          {dataType === "show" && singleEvent && (
+          {dataType === "show" && eventDetails && (
             <div className="detail-section">
               <h3>Détails du spectacle</h3>
-              <p><strong>{singleEvent.title}</strong></p>
-              <p>{singleEvent.place}</p>
-              <p>{singleEvent.date} • {singleEvent.hours}</p>
+              <p><strong>{eventDetails.title}</strong></p>
+              <p>{eventDetails.place}</p>
+              <p>{eventDetails.date} • {eventDetails.hours}</p>
               <p>Places adultes : {formData.adultes} × 15 €</p>
               <p>Places enfants : {formData.enfants} × 10 €</p>
-              <p>Total places : {formData.adultes + formData.enfants}</p>
+              <p>Total places : {(formData.adultes || 0) + (formData.enfants || 0)}</p>
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
             </div>
           )}
 
-          {/* COURS */}
+          {/* COURS (inchangé – fonctionne toujours avec les metadata) */}
           {dataType === "courses" && (
             <div className="detail-section">
               <h3>Détails du cours</h3>
@@ -189,6 +220,13 @@ const Success = () => {
               )}
 
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
+            </div>
+          )}
+
+          {/* Message si événement non trouvé (rare mais sécurisé) */}
+          {(dataType === "traineeship" || dataType === "show") && !eventDetails && (
+            <div className="detail-section">
+              <p>Les détails de l’événement ne sont pas disponibles pour le moment.</p>
             </div>
           )}
         </div>
