@@ -15,137 +15,98 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAllCapacities = async () => {
+    const fetchCapacities = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-
-        // 1. Stages
-        if (dataType === "traineeship" && data?.id) {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/traineeships/${data.id}`);
-
-          if (res.ok) {
-            const event = await res.json();
-            const total = event.numberOfPlaces || 0;
-            const booked = event.bookedPlaces || 0;
-            
-            // ✅ FIX 1 : Définir `cap` avant de l'utiliser
+  
+        // 1. Traineeship
+        if (dataType === "traineeship") {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/traineeships`);
+          const list = await res.json();
+          const event = list[0]; // ⭐ PRENDRE LE PREMIER
+  
+          if (event) {
             const cap = {
-              total,
-              booked,
-              available: Math.max(0, total - booked),
-              isFull: total > 0 && total - booked <= 0,
+              total: event.numberOfPlaces || 0,
+              booked: event.bookedPlaces || 0,
+              available: Math.max(0, (event.numberOfPlaces || 0) - (event.bookedPlaces || 0)),
+              isFull: (event.numberOfPlaces || 0) - (event.bookedPlaces || 0) <= 0
             };
-            
+  
             setTraineeshipCapacity(cap);
-            setFetchedData(prev => ({ 
-              ...prev, 
-              traineeship: event, 
-              traineeshipCapacity: cap 
-            }));
-            console.log("fetchedData :", fetchedData);
+            setFetchedData({ traineeship: event, traineeshipCapacity: cap });
           }
         }
-
-        // 2. Spectacles
-        if (dataType === "show" && data?.id) {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows/${data.id}`);
-
-          if (res.ok) {
-            const event = await res.json();
-            const total = event.numberOfPlaces || 0;
-            const booked = event.bookedPlaces || 0;
-            
-            // ✅ FIX 1 : Définir `cap` avant de l'utiliser
+  
+        // 2. Show
+        if (dataType === "show") {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/shows`);
+          const list = await res.json();
+          const event = list[0]; // ⭐ PRENDRE LE PREMIER
+  
+          if (event) {
             const cap = {
-              total,
-              booked,
-              available: Math.max(0, total - booked),
-              isFull: total > 0 && total - booked <= 0,
+              total: event.numberOfPlaces || 0,
+              booked: event.bookedPlaces || 0,
+              available: Math.max(0, (event.numberOfPlaces || 0) - (event.bookedPlaces || 0)),
+              isFull: (event.numberOfPlaces || 0) - (event.bookedPlaces || 0) <= 0
             };
-            
+  
             setShowCapacity(cap);
-            setFetchedData(prev => ({ 
-              ...prev, 
-              show: event, 
-              showCapacity: cap 
-            }));
+            setFetchedData({ show: event, showCapacity: cap });
           }
-          console.log("fetchedData :", fetchedData);
         }
-
-        // 3. COURS : on charge TOUT (essai + réguliers)
+  
+        // 3. Trial courses
         if (dataType === "courses") {
-          // Cours d'essai
           const trialRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trial-courses`);
-
-          if (trialRes.ok) {
-            const trials = await trialRes.json();
-        
-            const trialCapacities = trials.map(course => ({
-              id: course.id || course._id,
-              total: course.numberOfPlaces || 0,
-              booked: course.bookedPlaces || 0,
-              available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
-              isFull: (course.numberOfPlaces || 0) > 0 && (course.numberOfPlaces - course.bookedPlaces) <= 0,
-            }));
-        
-            setTrialCoursesCapacity(trialCapacities);
-        
-            // ✅ FIX 2 : Structure plus propre pour éviter les collisions futures
-            setFetchedData(prev => ({
-              ...prev,
-              courses: {
-                ...prev.courses,
-                trials
-              },
-              capacities: {
-                ...prev.capacities,
-                trialCapacities
-              }
-            }));
-            console.log("fetchedData :", fetchedData);
-          }
-        
-          // Cours classiques
+          const trials = await trialRes.json();
+  
+          const trialCapacities = trials.map(course => ({
+            id: course._id,
+            total: course.numberOfPlaces || 0,
+            booked: course.bookedPlaces || 0,
+            available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
+            isFull: (course.numberOfPlaces || 0) - (course.bookedPlaces || 0) <= 0,
+          }));
+  
+          setTrialCoursesCapacity(trialCapacities);
+  
+          // Classic courses
           const classicRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/classic-courses`);
-          if (classicRes.ok) {
-            const classics = await classicRes.json();
-        
-            const classicCapacities = classics.map(course => ({
-              id: course.id || course._id,
-              total: course.numberOfPlaces || 0,
-              booked: course.bookedPlaces || 0,
-              available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
-              isFull: (course.numberOfPlaces || 0) > 0 && (course.numberOfPlaces - course.bookedPlaces) <= 0,
-            }));
-        
-            setClassicCoursesCapacity(classicCapacities);
-        
-            // ✅ FIX 2 : Structure plus propre pour éviter les collisions futures
-            setFetchedData(prev => ({
-              ...prev,
-              courses: {
-                ...prev.courses,
-                classics
-              },
-              capacities: {
-                ...prev.capacities,
-                classicCapacities
-              }
-            }));
-            console.log("fetchedData :", fetchedData);
-          }
+          const classics = await classicRes.json();
+  
+          const classicCapacities = classics.map(course => ({
+            id: course._id,
+            total: course.numberOfPlaces || 0,
+            booked: course.bookedPlaces || 0,
+            available: Math.max(0, (course.numberOfPlaces || 0) - (course.bookedPlaces || 0)),
+            isFull: (course.numberOfPlaces || 0) - (course.bookedPlaces || 0) <= 0,
+          }));
+  
+          setClassicCoursesCapacity(classicCapacities);
+  
+          setFetchedData({
+            courses: {
+              trials,
+              classics
+            },
+            capacities: {
+              trialCapacities,
+              classicCapacities
+            }
+          });
         }
-
-      } catch (err) {
-        console.error("Erreur chargement capacités :", err);
-      } finally {
-        setLoading(false);
+  
+      } catch (error) {
+        console.error(error);
       }
+      setLoading(false);
     };
-
-    fetchAllCapacities();
-  }, [dataType, data?.id]);
+  
+    fetchCapacities();
+  }, [dataType]);
+  
 
   const handleCloseModal = () => {
     setIsClosing(true);
