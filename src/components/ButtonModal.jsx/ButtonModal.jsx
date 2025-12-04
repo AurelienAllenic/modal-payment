@@ -110,6 +110,9 @@ const ButtonModal = ({ text, data, dataType, Modal }) => {
     fetchCapacities();
   }, [dataType]);
   
+  useEffect(() => {
+    console.log("fetchedData mis à jour :", fetchedData);
+  }, [fetchedData]);
 
   const handleCloseModal = () => {
     setIsClosing(true);
