@@ -1,7 +1,8 @@
 // ButtonModal.jsx
 import { useState, useEffect, useMemo } from "react";
+import Modal from "../Modal/Modal"
 
-const ButtonModal = ({ text, data, dataType, Modal }) => {
+const ButtonModal = ({ text, data, dataType }) => {
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
