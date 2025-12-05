@@ -1,5 +1,5 @@
 // src/pages/Success.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaSpinner } from "react-icons/fa";
 import "./success.scss";
