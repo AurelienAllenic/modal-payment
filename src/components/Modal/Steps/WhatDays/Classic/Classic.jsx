@@ -18,10 +18,11 @@ const Classic = ({
   onPrev,
   showPrevButton,
 }) => {
-  const coursesData = Array.isArray(data?.courses) ? data.courses : [];
-  const days = ["Mardi", "Mercredi", "Jeudi"];
+  const coursesData = Array.isArray(data?.courses?.classics)
+  ? data.courses.classics
+  : [];
 
-  console.log("COURSES REÇUS :", data.courses);
+  const days = ["Mardi", "Mercredi", "Jeudi"];
 
 
   const [selectedCourses, setSelectedCourses] = useState({
@@ -133,7 +134,7 @@ const Classic = ({
               <h3>{day}</h3>
               <div className="container-options-day">
                 {coursesData
-                  .filter((course) => course.day === day)
+                  .filter((course) => course.day?.toLowerCase() === day.toLowerCase())
                   .map((course, index) => (
                     <label
                       key={index}
