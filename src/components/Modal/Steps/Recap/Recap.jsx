@@ -9,69 +9,106 @@ const Recap = ({
   dataType,
   stepNumber,
   onPrev,
-  onReserve,
   showPrevButton,
 }) => {
   console.log("Recap → formData :", formData, "dataType :", dataType);
 
-  const eventData = Array.isArray(data) 
-      ? data[0]
-      : Object.values(data || {}).find(item => item?.title || item?.date) || data;
+  // L'OBJET QUI CONTIENT L'ÉVÉNEMENT AVEC SON _id – LA SOURCE DE VÉRITÉ UNIQUE
+  const currentEvent = (() => {
+    // Stages & Spectacles → data est l'objet complet avec _id
+    if (dataType === "traineeship" || dataType === "show") {
+      return data && data._id ? data : null;
+    }
 
+    // Cours d’essai → tout est dans formData.trialCourse
+    if (dataType === "courses" && formData.courseType === "essai" && formData.trialCourse) {
+      return formData.trialCourse;
+    }
+
+    // Cours réguliers → on prend le premier cours sélectionné qui existe
+    if (dataType === "courses" && formData.classicCourses) {
+      const selected = Object.values(formData.classicCourses).find(c => c && c._id);
+      return selected || null;
+    }
+
+    return null;
+  })();
+
+  console.log("currentEvent (avec _id) →", currentEvent);
+
+  // Calcul du prix Stripe pour les cours
+  const getStripePriceId = () => {
+    if (dataType !== "courses") return null;
+
+    // Cours d’essai → prix fixe
+    if (formData.courseType === "essai") {
+      return import.meta.env.VITE_PRICE_COURSE_TRIAL;
+    }
+
+    // Cours réguliers
+    const isChild = formData.ageGroup === "enfant" || formData.ageGroup === "Enfant";
+    const durationMap = {
+      trimestre: "TRIMESTER",
+      semestre: "SEMESTER",
+      annee: "YEAR",
+    };
+    const durationKey = formData.duration || formData.courseType;
+    const normalizedDuration = durationMap[durationKey];
+
+    if (!normalizedDuration || !formData.nbCoursesPerWeek) {
+      console.error("Durée ou nb de cours manquant");
+      return null;
+    }
+
+    const nb = formData.nbCoursesPerWeek;
+    const type = isChild ? "CHILD" : "ADULT";
+    const key = `VITE_PRICE_${normalizedDuration}_${nb}_${type}`;
+
+    return import.meta.env[key] || null;
+  };
+
+  // Calcul total spectacle (affichage)
+  const calculateShowTotal = () => {
+    const adultes = formData.adultes || 0;
+    const enfants = formData.enfants || 0;
+    return adultes * 15 + enfants * 10;
+  };
+
+  // Lancement du paiement
   const handleReserve = async () => {
     try {
-      let items = []; // Tableau d'items envoyé à Stripe
-  
-      // === STAGES → 1 ligne par participant (comme les spectacles) ===
+      let items = [];
+
+      // STAGES
       if (dataType === "traineeship") {
-        const stagePriceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
-        const nbParticipants = formData.nombreParticipants || 1;
-  
-        if (!stagePriceId) {
-          alert("Erreur : prix du stage manquant (VITE_PRICE_TRAINEESHIP)");
-          return;
-        }
-  
-        // On ajoute une ligne séparée pour chaque participant
-        for (let i = 0; i < nbParticipants; i++) {
-          items.push({ price: stagePriceId, quantity: 1 });
+        const priceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
+        if (!priceId) return alert("Erreur : prix du stage manquant");
+        const nb = formData.nombreParticipants || 1;
+        for (let i = 0; i < nb; i++) {
+          items.push({ price: priceId, quantity: 1 });
         }
       }
-  
-      // === SPECTACLES → 2 produits séparés (adulte / enfant) ===
+
+      // SPECTACLES
       else if (dataType === "show") {
         const adultPriceId = import.meta.env.VITE_PRICE_SHOW_ADULT;
         const childPriceId = import.meta.env.VITE_PRICE_SHOW_CHILD;
-  
-        if (!adultPriceId || !childPriceId) {
-          alert("Erreur : prix adulte ou enfant manquant dans les variables d'environnement.");
-          return;
-        }
-  
-        if (formData.adultes > 0) {
-          items.push({ price: adultPriceId, quantity: formData.adultes });
-        }
-        if (formData.enfants > 0) {
-          items.push({ price: childPriceId, quantity: formData.enfants });
-        }
-  
-        if (items.length === 0) {
-          alert("Veuillez sélectionner au moins une place.");
-          return;
-        }
+        if (!adultPriceId || !childPriceId) return alert("Erreur : prix spectacle manquant");
+
+        if (formData.adultes > 0) items.push({ price: adultPriceId, quantity: formData.adultes });
+        if (formData.enfants > 0) items.push({ price: childPriceId, quantity: formData.enfants });
+
+        if (items.length === 0) return alert("Veuillez sélectionner au moins une place");
       }
-  
-      // === COURS (essai ou réguliers) ===
+
+      // COURS
       else if (dataType === "courses") {
         const priceId = getStripePriceId();
-        if (!priceId) {
-          alert("Erreur : aucun prix configuré pour ce cours.");
-          return;
-        }
+        if (!priceId) return alert("Erreur : prix du cours non trouvé");
         items = [{ price: priceId, quantity: 1 }];
       }
-  
-  
+
+      // Envoi à Stripe
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -80,14 +117,16 @@ const Recap = ({
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-            eventId: eventData._id.toString(), // LA LIGNE QUI CHANGE TOUT (obligatoire)
+
+            // ID CORRECT DANS TOUS LES CAS
+            eventId: currentEvent?._id?.toString() || null,
 
             // Infos client
-            nom: formData.nom,
-            email: formData.email,
-            telephone: formData.telephone,
+            nom: formData.nom || "",
+            email: formData.email || "",
+            telephone: formData.telephone || "",
 
-            // Quantités réservées
+            // Quantités
             nombreParticipants: formData.nombreParticipants?.toString() || "",
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
@@ -97,163 +136,104 @@ const Recap = ({
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
 
-            // Bonus propre pour les cours d'essai (fortement recommandé)
-            trialCourseId: formData.courseType === "essai" && formData.trialCourse?._id
-              ? formData.trialCourse._id.toString()
-              : null,
-
-            // Tu peux garder ces champs pour l'affichage dans l'email (inoffensifs)
-            eventTitle: eventData?.title || "",
-            eventPlace: eventData?.place || "",
-            eventDate: eventData?.date || "",
-            eventHours: eventData?.hours || "",
-
-            // Tu peux supprimer ces deux lignes si tu veux (plus utilisées par le back)
-            // trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
-            // classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
+            // Pour l'email de confirmation
+            eventTitle: currentEvent?.title || "Réservation Modal Danse",
+            eventPlace: currentEvent?.place || "Modal Danse",
+            eventDate: currentEvent?.date || "",
+            eventHours: currentEvent?.time || currentEvent?.hours || "",
           },
         }),
       });
-  
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur serveur");
+        const err = await response.json();
+        throw new Error(err.error || "Erreur serveur");
       }
-  
+
       const { url } = await response.json();
-      if (!url) throw new Error("URL de paiement non générée.");
-  
+      if (!url) throw new Error("URL de paiement non reçue");
       window.location.href = url;
+
     } catch (err) {
       console.error("Erreur paiement :", err);
       alert("Une erreur est survenue : " + err.message);
     }
   };
 
-  // Calcul du total pour affichage (spectacles)
-  const calculateShowTotal = () => {
-    const adultes = formData.adultes || 0;
-    const enfants = formData.enfants || 0;
-    return adultes * 15 + enfants * 10;
-  };
-
-  // === Gestion des priceId pour les cours ===
-  const getStripePriceId = () => {
-    if (dataType !== "courses") return null;
-
-    if (formData.courseType === "essai") {
-      return import.meta.env.VITE_PRICE_COURSE_TRIAL;
-    }
-
-    const isChild = formData.ageGroup === "enfant" || formData.ageGroup === "Enfant";
-
-    const durationMap = {
-      trimestre: "TRIMESTER",
-      semestre: "SEMESTER",
-      annee: "YEAR",
-    };
-
-    const durationKey = formData.duration || formData.courseType;
-    const normalizedDuration = durationMap[durationKey];
-
-    if (!normalizedDuration) {
-      console.error("Durée non reconnue :", durationKey);
-      return null;
-    }
-
-    const nb = formData.nbCoursesPerWeek;
-    if (!nb || nb < 1 || nb > 3) {
-      console.error("Nombre de cours par semaine invalide :", nb);
-      return null;
-    }
-
-    const type = isChild ? "CHILD" : "ADULT";
-    const key = `VITE_PRICE_${normalizedDuration}_${nb}_${type}`;
-
-    console.log("Price ID cours →", key, "=", import.meta.env[key]);
-    return import.meta.env[key] || null;
-  };
-
   return (
     <div className="containerRecap">
       <div className="RecapTitle">
         {stepNumber === 1 ? (
-          <PiNumberCircleOneThin className="stepIcon" />
-        ) : stepNumber === 2 ? (
-          <PiNumberCircleTwoThin className="stepIcon" />
-        ) : null}
+        <PiNumberCircleOneThin className="stepIcon" />
+      ) : stepNumber === 2 ? (
+        <PiNumberCircleTwoThin className="stepIcon" />
+      ) : null}
         <h2>Résumé de votre commande</h2>
       </div>
 
       <div className="containerAllRecap">
         <div className="containerRecapObject">
-          {/* === STAGES === */}
-          {dataType === "traineeship" && (
+          {/* STAGES */}
+          {dataType === "traineeship" && currentEvent && (
             <>
               <p>Stage :</p>
               <ul>
-                <li>{eventData?.title}</li>
-                <li>{eventData?.place}</li>
-                <li>{eventData?.hours}</li>
-                <li>{eventData?.date}</li>
-                <li>Participant(s) : {formData.nombreParticipants}</li>
+                <li>{currentEvent.title}</li>
+                <li>{currentEvent.place}</li>
+                <li>{currentEvent.hours}</li>
+                <li>{currentEvent.date}</li>
+                <li>Participant(s) : {formData.nombreParticipants || 1}</li>
               </ul>
               <p className="recapTotal">
-                Total : {formData.nombreParticipants * 20} €
+                Total : {(formData.nombreParticipants || 1) * 20} €
               </p>
             </>
           )}
 
-          {/* === SPECTACLES === */}
-          {dataType === "show" && (
+          {/* SPECTACLES */}
+          {dataType === "show" && currentEvent && (
             <>
               <p>Spectacle :</p>
               <ul>
-                <li>{eventData?.title}</li>
-                <li>{eventData?.place}</li>
-                <li>{eventData?.hours}</li>
-                <li>{eventData?.date}</li>
-                <li>
-                  Places adultes : {formData.adultes || 0} × 15€ ={" "}
-                  {(formData.adultes || 0) * 15}€
-                </li>
-                <li>
-                  Places enfants : {formData.enfants || 0} × 10€ ={" "}
-                  {(formData.enfants || 0) * 10}€
-                </li>
-                <li>
-                  Total places : {(formData.adultes || 0) + (formData.enfants || 0)}
-                </li>
+                <li>{currentEvent.title}</li>
+                <li>{currentEvent.place}</li>
+                <li>{currentEvent.hours}</li>
+                <li>{currentEvent.date}</li>
+                <li>Adultes : {formData.adultes || 0} × 15€ = {(formData.adultes || 0) * 15}€</li>
+                <li>Enfants : {formData.enfants || 0} × 10€ = {(formData.enfants || 0) * 10}€</li>
+                <li>Total places : {(formData.adultes || 0) + (formData.enfants || 0)}</li>
               </ul>
               <p className="recapTotal">Total : {calculateShowTotal()} €</p>
             </>
           )}
 
-          {/* === COURS === */}
+          {/* COURS */}
           {dataType === "courses" && (
             <>
               <p>Cours :</p>
               <ul>
-                <li>Catégorie d’âge : {formData.ageGroup}</li>
-                <li>Type de cours : {formData.courseType}</li>
+                <li>Catégorie d’âge : {formData.ageGroup || "—"}</li>
+                <li>Type : {formData.courseType === "essai" ? "Cours d’essai" : "Cours réguliers"}</li>
 
+                {/* Cours d’essai */}
                 {formData.courseType === "essai" && formData.trialCourse && (
                   <>
-                    <li>Date du cours : {formData.trialCourse.date}</li>
+                    <li>Date : {formData.trialCourse.date}</li>
                     <li>Heure : {formData.trialCourse.time}</li>
                     <li>Lieu : {formData.trialCourse.place}</li>
                   </>
                 )}
 
+                {/* Cours réguliers */}
                 {formData.courseType !== "essai" && formData.classicCourses && (
                   <>
                     <li><strong>Cours sélectionnés :</strong></li>
                     <ul>
                       {Object.entries(formData.classicCourses)
-                        .filter(([, course]) => course)
-                        .map(([day, course], index) => (
-                          <li key={index}>
-                            <strong>{day} :</strong> {course.date} – {course.time} – {course.place}
+                        .filter(([, c]) => c)
+                        .map(([day, c]) => (
+                          <li key={day}>
+                            <strong>{day} :</strong> {c.date} – {c.time} – {c.place}
                           </li>
                         ))}
                     </ul>
