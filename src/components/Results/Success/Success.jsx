@@ -136,8 +136,8 @@ const Success = () => {
             <div className="detail-section">
               <h3>Détails du stage</h3>
               <p><strong>{session.event.title}</strong></p>
-              <p>{formData.eventPlace}</p>
-              <p>{formData.eventDate} • {formData.eventHours}</p>
+              <p>{session.event.place}</p>
+              <p>{session.event.date} • {session.event.hours}</p>
               <p>Participants : {formData.nombreParticipants}</p>
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
             </div>
