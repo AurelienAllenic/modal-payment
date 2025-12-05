@@ -21,6 +21,9 @@ const Classic = ({
   const coursesData = Array.isArray(data?.courses) ? data.courses : [];
   const days = ["Mardi", "Mercredi", "Jeudi"];
 
+  console.log("COURSES REÇUS :", data.courses);
+
+
   const [selectedCourses, setSelectedCourses] = useState({
     Mardi: formData?.classicCourses?.Mardi || null,
     Mercredi: formData?.classicCourses?.Mercredi || null,
