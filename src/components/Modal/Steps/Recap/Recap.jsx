@@ -18,10 +18,12 @@ const Recap = ({
     console.log("courseType => ", courseType)
     if(courseType === "essai"){
       console.log('essai');
-    }else{
-      formData.classicCourses.forEach((course) => {
-        console.log("course id : ", course._id)
-      })
+    } else {
+      Object.values(formData.classicCourses || {})
+        .filter(course => course)
+        .forEach(course => {
+          console.log("course id :", course._id);
+        });
     }
   }
   const eventData = Array.isArray(data) 
