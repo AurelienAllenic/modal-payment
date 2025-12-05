@@ -42,12 +42,11 @@ const Success = () => {
   }, [sessionId]);
 
   const copyOrderNumber = () => {
-    navigator.clipboard.writeText(session?.id || "");
+    navigator.clipboard.writeText(session?.orderNumber || session?.id || "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // ────────────── Gestion des cas d'erreur ou chargement ──────────────
   if (!sessionId || error) {
     return (
       <div className="success-container">
@@ -73,7 +72,6 @@ const Success = () => {
     );
   }
 
-  // ────────────── Données de base ──────────────
   const metadata = session.metadata || {};
   const customer = session.customer_details || {};
   const amount = (session.amount_total / 100).toFixed(2);
@@ -83,19 +81,20 @@ const Success = () => {
     nom: metadata.nom || customer.name || "Non renseigné",
     email: metadata.email || customer.email,
     telephone: metadata.telephone || customer.phone || "Non renseigné",
-    nombreParticipants: metadata.nombreParticipants ? parseInt(metadata.nombreParticipants) : null,
+    nombreParticipants: metadata.nombreParticipants ? parseInt(metadata.nombreParticipants) : 1,
     adultes: metadata.adultes ? parseInt(metadata.adultes) : 0,
     enfants: metadata.enfants ? parseInt(metadata.enfants) : 0,
     ageGroup: metadata.ageGroup || "",
     courseType: metadata.courseType || "",
-    totalPrice: metadata.totalPrice ? parseFloat(metadata.totalPrice) : null,
+    totalPrice: metadata.totalPrice ? parseFloat(metadata.totalPrice) : amount,
     trialCourse: metadata.trialCourse ? JSON.parse(metadata.trialCourse) : null,
     classicCourses: metadata.classicCourses ? JSON.parse(metadata.classicCourses) : null,
+    eventTitle: metadata.eventTitle || "",
+    eventPlace: metadata.eventPlace || "",
+    eventDate: metadata.eventDate || "",
+    eventHours: metadata.eventHours || "",
   };
 
-  const event = session.event; // ← utilisation directe de l'event
-
-  // ────────────── Rendu final ──────────────
   return (
     <div className="success-container">
       <div className="success-card">
@@ -108,27 +107,11 @@ const Success = () => {
             Numéro de commande : <strong>{session.orderNumber || session.id}</strong>
           </p>
           <button onClick={copyOrderNumber} className="copy-btn" title="Copier le numéro de commande">
-            {copied ? (
-              <>
-                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                  <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-                </svg>
-                Copié !
-              </>
-            ) : (
-              <>
-                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                  <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                  <path d="M5.25 1.75C5.25.784 6.034 0 7 0h7.25C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11H14v-1.5a.75.75 0 00-1.5 0v1.5h-.25a.25.25 0 01-.25-.25v-7.5a.25.25 0 01.25-.25h7.5a.25.25 0 01.25.25v7.5a.25.25 0 01-.25.25h-1.5a.75.75 0 000 1.5h1.5c.966 0 1.75-.784 1.75-1.75v-7.5A1.75 1.75 0 0114.25 1H7a1.75 1.75 0 00-1.75 1.75v.25z"></path>
-                </svg>
-                Copier
-              </>
-            )}
+            {copied ? "Copié !" : "Copier"}
           </button>
         </div>
 
         <div className="success-details">
-
           {/* Informations client */}
           <div className="detail-section">
             <h3>Vos informations</h3>
@@ -138,27 +121,27 @@ const Success = () => {
           </div>
 
           {/* STAGE */}
-          {dataType === "traineeship" && event && (
+          {dataType === "traineeship" && (
             <div className="detail-section">
               <h3>Détails du stage</h3>
-              <p><strong>{event.title}</strong></p>
-              <p>{event.place}</p>
-              <p>{event.date} • {event.hours}</p>
+              <p><strong>{formData.eventTitle}</strong></p>
+              <p>{formData.eventPlace}</p>
+              <p>{formData.eventDate} • {formData.eventHours}</p>
               <p>Participants : {formData.nombreParticipants}</p>
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
             </div>
           )}
 
           {/* SPECTACLE */}
-          {dataType === "show" && event && (
+          {dataType === "show" && (
             <div className="detail-section">
               <h3>Détails du spectacle</h3>
-              <p><strong>{event.title}</strong></p>
-              <p>{event.place}</p>
-              <p>{event.date} • {event.hours}</p>
+              <p><strong>{formData.eventTitle}</strong></p>
+              <p>{formData.eventPlace}</p>
+              <p>{formData.eventDate} • {formData.eventHours}</p>
               <p>Places adultes : {formData.adultes} × 15 €</p>
               <p>Places enfants : {formData.enfants} × 10 €</p>
-              <p>Total places : {(formData.adultes || 0) + (formData.enfants || 0)}</p>
+              <p>Total places : {formData.adultes + formData.enfants}</p>
               <p className="price"><strong>Montant payé : {amount} €</strong></p>
             </div>
           )}
