@@ -26,7 +26,7 @@ const ButtonModal = ({ text, data, dataType }) => {
         </button>
       ) : (
         <Modal
-          data={data}
+          fetchedData={data}
           dataType={dataType}
           onClose={handleCloseModal}
           isClosing={isClosing}
