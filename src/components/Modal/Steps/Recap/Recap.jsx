@@ -67,7 +67,9 @@ const Recap = ({
         items = [{ price: priceId, quantity: 1 }];
       }
   
-      const eventData = Array.isArray(data) ? data[0] : data;
+      const eventData = Array.isArray(data) 
+      ? data[0]
+      : Object.values(data || {}).find(item => item?.title || item?.date) || data;
   
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
         method: "POST",
@@ -122,8 +124,6 @@ const Recap = ({
     const enfants = formData.enfants || 0;
     return adultes * 15 + enfants * 10;
   };
-
-  const eventData = Array.isArray(data) ? data[0] : data;
 
   // === Gestion des priceId pour les cours ===
   const getStripePriceId = () => {
