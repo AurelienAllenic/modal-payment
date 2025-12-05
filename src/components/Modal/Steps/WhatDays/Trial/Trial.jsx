@@ -26,6 +26,7 @@ const getStepIcon = (stepNumber) => {
 };
 
 const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
+  console.log(formData, "formData Trial")
   const [selectedDateIndex, setSelectedDateIndex] = useState(
     formData?.trialCourse
       ? trialCourses.findIndex(
@@ -38,20 +39,31 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
   );
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selectedDateIndex === null) {
-      alert("Veuillez sélectionner une date.");
-      return;
-    }
-    const selectedCourse = trialCourses[selectedDateIndex];
-  
-    onNext({
-      trialCourse: selectedCourse,
-      totalPrice: 10,
-      courseType: "essai",
-      duration: "trial",
-    });
-  };
+  e.preventDefault();
+
+      if (selectedDateIndex === null) {
+        alert("Veuillez sélectionner une date.");
+        return;
+      }
+
+      const staticCourse = trialCourses[selectedDateIndex];
+
+      // On récupère l'objet original contenant l'ID venant du backend
+      const realCourse = formData.allTrialCourses?.find(
+        c =>
+          c.date === staticCourse.date &&
+          c.time === staticCourse.time &&
+          c.place === staticCourse.place
+      ) || staticCourse;
+
+      onNext({
+        trialCourse: realCourse,
+        totalPrice: 10,
+        courseType: "essai",
+        duration: "trial",
+      });
+    };
+
 
   return (
     <div className="trialContainer">
