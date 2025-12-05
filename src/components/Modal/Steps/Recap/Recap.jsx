@@ -80,26 +80,37 @@ const Recap = ({
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-  
+            eventId: eventData._id.toString(), // LA LIGNE QUI CHANGE TOUT (obligatoire)
+
+            // Infos client
             nom: formData.nom,
             email: formData.email,
             telephone: formData.telephone,
-  
+
+            // Quantités réservées
             nombreParticipants: formData.nombreParticipants?.toString() || "",
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
-  
+
+            // Cours
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
-  
-            trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
-            classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
-  
+
+            // Bonus propre pour les cours d'essai (fortement recommandé)
+            trialCourseId: formData.courseType === "essai" && formData.trialCourse?._id
+              ? formData.trialCourse._id.toString()
+              : null,
+
+            // Tu peux garder ces champs pour l'affichage dans l'email (inoffensifs)
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
             eventHours: eventData?.hours || "",
+
+            // Tu peux supprimer ces deux lignes si tu veux (plus utilisées par le back)
+            // trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
+            // classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
           },
         }),
       });
