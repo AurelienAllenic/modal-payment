@@ -1,5 +1,5 @@
 // src/pages/Success.jsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaSpinner } from "react-icons/fa";
 import "./success.scss";
@@ -14,21 +14,22 @@ const Success = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
+   const API_BASE_URL = (() => {
+    const isLocal = import.meta.env.MODE === "development";
+    const raw = isLocal
+      ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
+      : import.meta.env.VITE_BACKEND_URL || "";
+    const clean = raw.replace(/\/+$/, "");
+    return clean.endsWith("/api") ? clean : `${clean}/api`;
+  })();
+
+
   useEffect(() => {
     if (!sessionId) {
       setError("Aucune session trouvée");
       setLoading(false);
       return;
     }
-
-    const API_BASE_URL = useMemo(() => {
-  const isLocal = import.meta.env.MODE === "development";
-  const raw = isLocal
-    ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
-    : import.meta.env.VITE_BACKEND_URL || "";
-  const clean = raw.replace(/\/+$/, "");
-  return clean.endsWith("/api") ? clean : `${clean}/api`;
-}, []);
 
 
     const fetchSession = async () => {
