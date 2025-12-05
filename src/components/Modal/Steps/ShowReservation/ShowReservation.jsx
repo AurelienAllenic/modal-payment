@@ -17,19 +17,24 @@ const ShowReservation = ({
   showPrevButton,
   show,
 }) => {
+  console.log(initialData, 'initialData')
   const [formData, setFormData] = useState({
     adultes: initialData?.adultes || 0,
     enfants: initialData?.enfants || 0,
   });
 
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        adultes: initialData.adultes || 0,
-        enfants: initialData.enfants || 0,
-      });
-    }
-  }, [initialData]);
+  if (initialData) {
+    setFormData(prev => ({
+      ...prev, // garde ce qui existe déjà (adultes/enfants, etc.)
+      ...initialData, // ajoute ou remplace les champs venant de initialData
+      adultes: initialData.adultes ?? prev.adultes ?? 0,
+      enfants: initialData.enfants ?? prev.enfants ?? 0,
+    }));
+  }
+  console.log('modifiedInitialData : ', initialData);
+}, [initialData]);
+
 
   const handleNumberChange = (type, increment) => {
     setFormData((prev) => ({
@@ -132,7 +137,7 @@ const ShowReservation = ({
           </div>
         </form>
         <div className="rightImage">
-          <img src={show.img} alt={show.alt} />
+          <img src={initialData?.img} alt={initialData?.alt} />
         </div>
       </div>
     </div>

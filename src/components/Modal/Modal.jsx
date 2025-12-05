@@ -59,14 +59,13 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
 
   if (dataType === "show") {
     setFormData({
-      nom: "",
-      telephone: "",
-      email: "",
-      message: "",
-      adultes: 0,
-      enfants: 0,
-      event: fetchedData.show,
-      eventCapacity: fetchedData.showCapacity,
+      title: fetchedData.title,
+      date: fetchedData.date,
+      hours: fetchedData.hours,
+      numberOfPlaces: fetchedData.numberOfPlaces,
+      _id: fetchedData._id,
+      alt: fetchedData.alt,
+      img: fetchedData.img
     });
   }
 

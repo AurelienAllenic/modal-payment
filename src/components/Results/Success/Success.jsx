@@ -147,9 +147,9 @@ const Success = () => {
           {dataType === "show" && (
             <div className="detail-section">
               <h3>Détails du spectacle</h3>
-              <p><strong>{formData.eventTitle}</strong></p>
-              <p>{formData.eventPlace}</p>
-              <p>{formData.eventDate} • {formData.eventHours}</p>
+              <p><strong>{session.event.title}</strong></p>
+              <p>{session.event.place}</p>
+              <p>{session.event.date} • {session.event.hours}</p>
               <p>Places adultes : {formData.adultes} × 15 €</p>
               <p>Places enfants : {formData.enfants} × 10 €</p>
               <p>Total places : {formData.adultes + formData.enfants}</p>
