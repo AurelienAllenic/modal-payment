@@ -15,6 +15,11 @@ const Success = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
+
+  useEffect(() => {
+    console.log("📌 STATE eventDetails ACTUALISÉ :", eventDetails);
+  }, [eventDetails]);
+
   useEffect(() => {
     if (!sessionId) {
       setError("Aucune session trouvée");
@@ -50,6 +55,7 @@ const Success = () => {
           if (eventRes.ok) {
             const event = await eventRes.json();
             setEventDetails(event);
+            console.log("📌 EVENT DETAILS REÇU DU BACK :", event);
           } else {
             console.warn(`Événement ${type} non trouvé (ID: ${id})`);
           }
