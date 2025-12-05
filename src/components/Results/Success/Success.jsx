@@ -21,11 +21,20 @@ const Success = () => {
       return;
     }
 
+    const API_BASE_URL = useMemo(() => {
+  const isLocal = import.meta.env.MODE === "development";
+  const raw = isLocal
+    ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
+    : import.meta.env.VITE_BACKEND_URL || "";
+  const clean = raw.replace(/\/+$/, "");
+  return clean.endsWith("/api") ? clean : `${clean}/api`;
+}, []);
+
+
     const fetchSession = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/retrieve-session?session_id=${sessionId}`
-        );
+        const res = await fetch(`${API_BASE_URL}/retrieve-session?session_id=${sessionId}`);
+
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
         console.log("DATA :", data);
@@ -86,6 +95,7 @@ const Success = () => {
     enfants: metadata.enfants ? parseInt(metadata.enfants) : 0,
     ageGroup: metadata.ageGroup || "",
     courseType: metadata.courseType || "",
+    event: session.event || {}, 
     totalPrice: metadata.totalPrice ? parseFloat(metadata.totalPrice) : amount,
     trialCourse: metadata.trialCourse ? JSON.parse(metadata.trialCourse) : null,
     classicCourses: metadata.classicCourses ? JSON.parse(metadata.classicCourses) : null,
@@ -124,7 +134,7 @@ const Success = () => {
           {dataType === "traineeship" && (
             <div className="detail-section">
               <h3>Détails du stage</h3>
-              <p><strong>{formData.eventTitle}</strong></p>
+              <p><strong>{session.event.title}</strong></p>
               <p>{formData.eventPlace}</p>
               <p>{formData.eventDate} • {formData.eventHours}</p>
               <p>Participants : {formData.nombreParticipants}</p>

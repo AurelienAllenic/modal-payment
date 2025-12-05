@@ -13,12 +13,24 @@ function App() {
   const [courses, setCourses] = useState([]);
   const [trialCourses, setTrialCourses] = useState([]);
 
-  // URL du backend propre
   const API_BASE_URL = useMemo(() => {
-    const raw = import.meta.env.VITE_BACKEND_URL || "";
-    const clean = raw.replace(/\/+$/, "");
-    return clean.endsWith("/api") ? clean : `${clean}/api`;
-  }, []);
+  // Déterminer si on est en local
+  const isLocal = import.meta.env.MODE === "development"; 
+  // Choisir la variable d'environnement
+  const raw = isLocal
+    ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
+    : import.meta.env.VITE_BACKEND_URL || "";
+
+  // Nettoyage de l'URL
+  const clean = raw.replace(/\/+$/, "");
+  return clean.endsWith("/api") ? clean : `${clean}/api`;
+}, []);
+
+/*
+useEffect(() => {
+    console.log(traineeship, showData, courses, trialCourses)
+}, [traineeship, showData, courses, trialCourses])
+*/
 
   useEffect(() => {
     const fetchAll = async () => {

@@ -44,6 +44,49 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
     return {};
   }, [dataType, fetchedData]);
 
+  useEffect(() => {
+  if (!fetchedData) return;
+
+  if (dataType === "traineeship") {
+    setFormData({
+      title: fetchedData.title,
+      date: fetchedData.date,
+      hours: fetchedData.hours,
+      numberOfPlaces: fetchedData.numberOfPlaces,
+      _id: fetchedData._id,
+    });
+  }
+
+  if (dataType === "show") {
+    setFormData({
+      nom: "",
+      telephone: "",
+      email: "",
+      message: "",
+      adultes: 0,
+      enfants: 0,
+      event: fetchedData.show,
+      eventCapacity: fetchedData.showCapacity,
+    });
+  }
+
+  if (dataType === "courses") {
+    setFormData({
+      nom: "",
+      telephone: "",
+      email: "",
+      message: "",
+      courseType: "",
+      ageGroup: "",
+      trialCourse: null,
+      classicCourses: {},
+      totalPrice: 0,
+      ...fetchedData.courses, 
+    });
+  }
+}, [fetchedData, dataType]);
+
+
   // Helper pour trouver la capacité d'un cours
   const getCourseCapacity = (courseId, capacitiesArray) => {
     return capacitiesArray?.find(cap => cap.id === courseId);
@@ -52,7 +95,7 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
   // Réinitialiser le modal quand le dataType change
   useEffect(() => {
     setCurrentStep(0);
-    setFormData({});
+    //setFormData({});
   }, [dataType]);
 
   // Fonction pour générer un numéro de commande aléatoire

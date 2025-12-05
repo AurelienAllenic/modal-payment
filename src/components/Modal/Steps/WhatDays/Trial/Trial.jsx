@@ -8,7 +8,6 @@ import {
 import { HiArrowLongRight } from "react-icons/hi2";
 import { AiOutlineCheck } from "react-icons/ai";
 import "./trial.scss";
-import { trialCourses } from "../../../../data/Data";
 
 const getStepIcon = (stepNumber) => {
   switch (stepNumber) {

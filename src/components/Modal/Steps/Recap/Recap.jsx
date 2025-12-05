@@ -13,22 +13,18 @@ const Recap = ({
   showPrevButton,
 }) => {
   console.log("Recap → formData :", formData, "dataType :", dataType, "data :", data );
-  if(dataType === "courses"){
-    const courseType = formData.courseType
-    console.log("courseType => ", courseType)
-    if(courseType === "essai"){
-      console.log('essai');
-    } else {
-      Object.values(formData.classicCourses || {})
-        .filter(course => course)
-        .forEach(course => {
-          console.log("course id :", course._id);
-        });
-    }
-  }
-  const eventData = Array.isArray(data) 
-      ? data[0]
-      : Object.values(data || {}).find(item => item?.title || item?.date) || data;
+
+  const API_BASE_URL = (() => {
+  const isLocal = import.meta.env.MODE === "development"; 
+  const raw = isLocal
+    ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
+    : import.meta.env.VITE_BACKEND_URL || "";
+  const clean = raw.replace(/\/+$/, "");
+  return clean.endsWith("/api") ? clean : `${clean}/api`;
+})();
+
+ 
+  const eventData = data?.event || {};
 
   const handleReserve = async () => {
     try {
@@ -84,7 +80,8 @@ const Recap = ({
       }
   
   
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-checkout-session`, {
+      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -92,7 +89,7 @@ const Recap = ({
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-            eventId: eventData._id.toString(), // LA LIGNE QUI CHANGE TOUT (obligatoire)
+            eventId: formData._id.toString(), // LA LIGNE QUI CHANGE TOUT (obligatoire)
 
             // Infos client
             nom: formData.nom,
@@ -204,10 +201,10 @@ const Recap = ({
             <>
               <p>Stage :</p>
               <ul>
-                <li>{eventData?.title}</li>
-                <li>{eventData?.place}</li>
-                <li>{eventData?.hours}</li>
-                <li>{eventData?.date}</li>
+                <li>{formData?.title}</li>
+                <li>{formData?.place}</li>
+                <li>{formData?.hours}</li>
+                <li>{formData?.date}</li>
                 <li>Participant(s) : {formData.nombreParticipants}</li>
               </ul>
               <p className="recapTotal">

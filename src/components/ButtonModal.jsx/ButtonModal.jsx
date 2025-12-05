@@ -5,6 +5,7 @@ import Modal from "../Modal/Modal";
 const ButtonModal = ({ text, data, dataType }) => {
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  console.log(data)
 
   const openModal = () => {
     setShowModal(true);

@@ -12,6 +12,7 @@ const PersonnalInfos = ({
   initialData,
   showPrevButton,
 }) => {
+  console.log(initialData, "initialData")
   const [formData, setFormData] = useState({
     nom: initialData?.nom || "",
     telephone: initialData?.telephone || "",
