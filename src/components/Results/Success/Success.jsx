@@ -30,6 +30,7 @@ const Success = () => {
         );
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
+        console.log("DATA :", data);
         setSession(data);
 
         const metadata = data.metadata || {};
