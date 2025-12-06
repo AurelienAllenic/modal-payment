@@ -32,19 +32,16 @@ const Recap = ({
       if (formData.courseType === "essai" && formData.trialCourse?._id) {
         return formData.trialCourse._id.toString();
       }
-      // Pour les cours classiques - tu peux adapter selon ta structure
-      // Si tu as un ID principal pour les cours classiques
+      // Pour les cours classiques
       if (formData.classicCourses) {
-        // Option 1 : prendre l'ID du premier cours
         const firstCourse = Object.values(formData.classicCourses).find(c => c?._id);
         if (firstCourse?._id) {
           return firstCourse._id.toString();
         }
       }
-      return "course-multiple"; // Fallback pour cours multiples
+      return "course-multiple";
     }
     
-    // Pour stages et spectacles
     return formData._id?.toString() || "";
   };
 
@@ -100,13 +97,25 @@ const Recap = ({
         items = [{ price: priceId, quantity: 1 }];
       }
   
-      // ✅ Récupération de l'eventId avec la fonction helper
       const eventId = getEventId();
       
       if (!eventId) {
         alert("Erreur : ID de l'événement manquant");
         console.error("formData:", formData);
         return;
+      }
+
+      // ✅ Préparer les données des cours classiques pour les métadonnées
+      let classicCoursesMetadata = {};
+      if (formData.courseType !== "essai" && formData.classicCourses) {
+        Object.entries(formData.classicCourses)
+          .filter(([, course]) => course)
+          .forEach(([day, course]) => {
+            classicCoursesMetadata[`classicCourse_${day}_date`] = course.date || "";
+            classicCoursesMetadata[`classicCourse_${day}_time`] = course.time || "";
+            classicCoursesMetadata[`classicCourse_${day}_place`] = course.place || "";
+            classicCoursesMetadata[`classicCourse_${day}_id`] = course._id?.toString() || "";
+          });
       }
 
       const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
@@ -117,7 +126,7 @@ const Recap = ({
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-            eventId: eventId, // ✅ Utilisation de la fonction helper
+            eventId: eventId,
 
             // Infos client
             nom: formData.nom,
@@ -133,22 +142,29 @@ const Recap = ({
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
+            
+            // ✅ Nouvelles infos pour les cours classiques
+            duration: formData.duration || "",
+            nbCoursesPerWeek: formData.nbCoursesPerWeek?.toString() || "",
 
-            // ✅ ID spécifique pour les cours d'essai
+            // ID spécifique pour les cours d'essai
             trialCourseId: formData.courseType === "essai" && formData.trialCourse?._id
               ? formData.trialCourse._id.toString()
               : "",
 
-            // Infos d'affichage pour l'email
+            // Détails du cours d'essai pour l'email
+            trialCourseDate: formData.trialCourse?.date || "",
+            trialCourseTime: formData.trialCourse?.time || "",
+            trialCoursePlace: formData.trialCourse?.place || "",
+
+            // ✅ Détails des cours classiques (décomposés)
+            ...classicCoursesMetadata,
+
+            // Infos d'affichage pour l'email (stages/spectacles)
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
             eventHours: eventData?.hours || "",
-
-            // ✅ Ajout des détails du cours d'essai pour l'email
-            trialCourseDate: formData.trialCourse?.date || "",
-            trialCourseTime: formData.trialCourse?.time || "",
-            trialCoursePlace: formData.trialCourse?.place || "",
           },
         }),
       });

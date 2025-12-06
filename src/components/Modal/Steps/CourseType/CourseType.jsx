@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { PiNumberCircleOneThin } from "react-icons/pi";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { HiCheck } from "react-icons/hi";
@@ -10,9 +10,16 @@ const CourseType = ({
   onPrev,
   showPrevButton,
   initialData,
+  data, // ✅ Ajout du prop data
 }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("");
   const [selectedCourseType, setSelectedCourseType] = useState("");
+
+  // ✅ Vérifier si des cours d'essai sont disponibles
+  const hasAvailableTrialCourses = useMemo(() => {
+    const trialCourses = data?.courses?.trials || [];
+    return trialCourses.some(course => course.numberOfPlaces > 0);
+  }, [data]);
 
   useEffect(() => {
     if (initialData) {
@@ -35,6 +42,30 @@ const CourseType = ({
 
   const getStepIcon = () =>
     stepNumber === 1 ? <PiNumberCircleOneThin className="stepIcon" /> : null;
+
+  // ✅ Liste des types de cours avec condition d'affichage
+  const courseTypes = [
+    { 
+      val: "essai", 
+      label: "Cours à l'essai (10€)", 
+      show: hasAvailableTrialCourses // Afficher seulement si des places disponibles
+    },
+    { 
+      val: "trimestre", 
+      label: "Cours au trimestre (200€ à 400€)", 
+      show: true 
+    },
+    { 
+      val: "semestre", 
+      label: "Cours au semestre (300€ à 600€)", 
+      show: true 
+    },
+    { 
+      val: "annee", 
+      label: "Cours à l'année (600€ à 800€)", 
+      show: true 
+    },
+  ];
 
   return (
     <div className="courseTypeContainer">
@@ -69,25 +100,28 @@ const CourseType = ({
           <div className="section">
             <h3>Quel type de cours souhaitez-vous réserver ?</h3>
             <div className="options">
-              {[
-                { val: "essai", label: "Cours à l'essai (10€)" },
-                { val: "trimestre", label: "Cours au trimestre (200€ à 400€)" },
-                { val: "semestre", label: "Cours au semestre (300€ à 600€)" },
-                { val: "annee", label: "Cours à l'année (600€ à 800€)" },
-              ].map(({ val, label }) => (
-                <label key={val} className="custom-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedCourseType === val}
-                    onChange={() => handleCourseTypeChange(val)}
-                  />
-                  <span className="checkmark">
-                    {selectedCourseType === val && <HiCheck />}
-                  </span>
-                  {label}
-                </label>
-              ))}
+              {courseTypes
+                .filter(({ show }) => show) // ✅ Filtrer uniquement les cours à afficher
+                .map(({ val, label }) => (
+                  <label key={val} className="custom-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedCourseType === val}
+                      onChange={() => handleCourseTypeChange(val)}
+                    />
+                    <span className="checkmark">
+                      {selectedCourseType === val && <HiCheck />}
+                    </span>
+                    {label}
+                  </label>
+                ))}
             </div>
+            {/* ✅ Message optionnel si aucun cours d'essai disponible */}
+            {!hasAvailableTrialCourses && (
+              <p className="info-message">
+                Les cours à l'essai sont actuellement complets.
+              </p>
+            )}
           </div>
         </div>
 

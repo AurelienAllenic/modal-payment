@@ -14,7 +14,7 @@ const Success = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
-   const API_BASE_URL = (() => {
+  const API_BASE_URL = (() => {
     const isLocal = import.meta.env.MODE === "development";
     const raw = isLocal
       ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
@@ -23,14 +23,12 @@ const Success = () => {
     return clean.endsWith("/api") ? clean : `${clean}/api`;
   })();
 
-
   useEffect(() => {
     if (!sessionId) {
       setError("Aucune session trouvée");
       setLoading(false);
       return;
     }
-
 
     const fetchSession = async () => {
       try {
@@ -49,7 +47,7 @@ const Success = () => {
     };
 
     fetchSession();
-  }, [sessionId]);
+  }, [sessionId, API_BASE_URL]);
 
   const copyOrderNumber = () => {
     navigator.clipboard.writeText(session?.orderNumber || session?.id || "");
@@ -87,6 +85,24 @@ const Success = () => {
   const amount = (session.amount_total / 100).toFixed(2);
   const dataType = metadata.type;
 
+  // ✅ Reconstruction des cours classiques depuis les métadonnées
+  const reconstructClassicCourses = () => {
+    const courses = {};
+    const days = ["Mardi", "Mercredi", "Jeudi"];
+    
+    days.forEach(day => {
+      const date = metadata[`classicCourse_${day}_date`];
+      const time = metadata[`classicCourse_${day}_time`];
+      const place = metadata[`classicCourse_${day}_place`];
+      
+      if (date && time && place) {
+        courses[day] = { date, time, place };
+      }
+    });
+    
+    return Object.keys(courses).length > 0 ? courses : null;
+  };
+
   const formData = {
     nom: metadata.nom || customer.name || "Non renseigné",
     email: metadata.email || customer.email,
@@ -98,12 +114,15 @@ const Success = () => {
     courseType: metadata.courseType || "",
     event: session.event || {}, 
     totalPrice: metadata.totalPrice ? parseFloat(metadata.totalPrice) : amount,
-    trialCourse: metadata.trialCourse ? JSON.parse(metadata.trialCourse) : null,
-    classicCourses: metadata.classicCourses ? JSON.parse(metadata.classicCourses) : null,
+    classicCourses: reconstructClassicCourses(), // ✅ Reconstruction
     eventTitle: metadata.eventTitle || "",
     eventPlace: metadata.eventPlace || "",
     eventDate: metadata.eventDate || "",
     eventHours: metadata.eventHours || "",
+    // Infos cours d'essai
+    trialCourseDate: metadata.trialCourseDate || "",
+    trialCourseTime: metadata.trialCourseTime || "",
+    trialCoursePlace: metadata.trialCoursePlace || "",
   };
 
   return (
@@ -128,7 +147,7 @@ const Success = () => {
             <h3>Vos informations</h3>
             <p><strong>Nom :</strong> {formData.nom}</p>
             <p><strong>Email :</strong> {formData.email}</p>
-            <p><strong>Téléphone :</strong> {formData?.telephone ?? formData?.phone}</p>
+            <p><strong>Téléphone :</strong> {formData.telephone}</p>
           </div>
 
           {/* STAGE */}
@@ -162,26 +181,26 @@ const Success = () => {
             <div className="detail-section">
               <h3>Détails du cours</h3>
               <p>Catégorie : {formData.ageGroup}</p>
-              <p>Type : {formData.courseType === "essai" ? "Cours d’essai" : "Cours régulier"}</p>
+              <p>Type : {formData.courseType === "essai" ? "Cours d'essai" : "Cours régulier"}</p>
 
+              {/* Cours d'essai */}
               {formData.courseType === "essai" && (
                 <>
-                  <p>Date : {session.event.date}</p>
-                  <p>Heure : {metadata.trialCourseTime}</p>
-                  <p>Lieu : {session.event.place}</p>
+                  <p>Date : {formData.trialCourseDate}</p>
+                  <p>Heure : {formData.trialCourseTime}</p>
+                  <p>Lieu : {formData.trialCoursePlace}</p>
                 </>
               )}
 
-              {formData.courseType !== "essai" && (
+              {/* ✅ Cours classiques */}
+              {formData.courseType !== "essai" && formData.classicCourses && (
                 <>
                   <p><strong>Cours sélectionnés :</strong></p>
-                  {Object.entries(formData.classicCourses)
-                    .filter(([, c]) => c)
-                    .map(([day, c]) => (
-                      <p key={day}>
-                        <strong>{day.charAt(0).toUpperCase() + day.slice(1)}</strong> : {c.date} – {c.time} – {c.place}
-                      </p>
-                    ))}
+                  {Object.entries(formData.classicCourses).map(([day, c]) => (
+                    <p key={day}>
+                      <strong>{day}</strong> : {c.date} – {c.time} – {c.place}
+                    </p>
+                  ))}
                 </>
               )}
 
