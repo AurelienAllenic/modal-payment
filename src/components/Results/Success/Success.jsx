@@ -167,7 +167,7 @@ const Success = () => {
               {formData.courseType === "essai" && (
                 <>
                   <p>Date : {session.event.date}</p>
-                  <p>Heure : {formData.metadata.trialCourseTime}</p>
+                  <p>Heure : {metadata.trialCourseTime}</p>
                   <p>Lieu : {session.event.place}</p>
                 </>
               )}
