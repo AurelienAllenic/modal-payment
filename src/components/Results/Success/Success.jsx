@@ -39,6 +39,7 @@ const Success = () => {
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
         console.log("DATA :", data);
+        console.log(metadata, "metadata")
         setSession(data);
       } catch (err) {
         console.error(err);
@@ -166,8 +167,8 @@ const Success = () => {
 
               {formData.courseType === "essai" && (
                 <>
-                  <p>Date : {formData.trialCourse.date}</p>
-                  <p>Heure : {formData.trialCourse.time}</p>
+                  <p>Date : {session.event.date}</p>
+                  <p>Heure : {session.event.hours}</p>
                   <p>Lieu : {formData.trialCourse.place}</p>
                 </>
               )}
