@@ -128,7 +128,7 @@ const Success = () => {
             <h3>Vos informations</h3>
             <p><strong>Nom :</strong> {formData.nom}</p>
             <p><strong>Email :</strong> {formData.email}</p>
-            <p><strong>Téléphone :</strong> {formData?.telephone} || {formData?.phone} </p>
+            <p><strong>Téléphone :</strong> {formData?.telephone ?? formData?.phone}</p>
           </div>
 
           {/* STAGE */}
@@ -167,7 +167,7 @@ const Success = () => {
               {formData.courseType === "essai" && (
                 <>
                   <p>Date : {session.event.date}</p>
-                  <p>Heure : {session.event.hours}</p>
+                  <p>Heure : {formData.metadata.trialCourseTime}</p>
                   <p>Lieu : {session.event.place}</p>
                 </>
               )}
