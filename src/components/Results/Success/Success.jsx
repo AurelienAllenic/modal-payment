@@ -168,7 +168,7 @@ const Success = () => {
                 <>
                   <p>Date : {session.event.date}</p>
                   <p>Heure : {session.event.hours}</p>
-                  <p>Lieu : {formData.trialCourse.place}</p>
+                  <p>Lieu : {session.event.place}</p>
                 </>
               )}
 
