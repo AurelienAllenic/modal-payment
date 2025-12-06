@@ -39,7 +39,6 @@ const Success = () => {
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
         console.log("DATA :", data);
-        console.log(metadata, "metadata")
         setSession(data);
       } catch (err) {
         console.error(err);
