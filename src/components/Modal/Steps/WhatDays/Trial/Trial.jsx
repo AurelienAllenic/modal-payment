@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   PiNumberCircleOneThin,
   PiNumberCircleTwoThin,
@@ -24,8 +24,17 @@ const getStepIcon = (stepNumber) => {
   }
 };
 
-const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
-  console.log(formData, "formData Trial")
+const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData, data }) => {
+  console.log("formData Trial:", formData);
+  console.log("data Trial:", data);
+
+  // ✅ Récupérer les cours d'essai depuis data.courses.trials
+  const trialCourses = useMemo(() => {
+    const courses = data?.courses?.trials || [];
+    console.log("trialCourses extraits:", courses);
+    return courses;
+  }, [data]);
+
   const [selectedDateIndex, setSelectedDateIndex] = useState(
     formData?.trialCourse
       ? trialCourses.findIndex(
@@ -38,31 +47,25 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
   );
 
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-      if (selectedDateIndex === null) {
-        alert("Veuillez sélectionner une date.");
-        return;
-      }
+    if (selectedDateIndex === null) {
+      alert("Veuillez sélectionner une date.");
+      return;
+    }
 
-      const staticCourse = trialCourses[selectedDateIndex];
+    // ✅ Le cours sélectionné contient déjà toutes les données du backend
+    const selectedCourse = trialCourses[selectedDateIndex];
 
-      // On récupère l'objet original contenant l'ID venant du backend
-      const realCourse = formData.allTrialCourses?.find(
-        c =>
-          c.date === staticCourse.date &&
-          c.time === staticCourse.time &&
-          c.place === staticCourse.place
-      ) || staticCourse;
+    console.log("Cours sélectionné:", selectedCourse);
 
-      onNext({
-        trialCourse: realCourse,
-        totalPrice: 10,
-        courseType: "essai",
-        duration: "trial",
-      });
-    };
-
+    onNext({
+      trialCourse: selectedCourse,
+      totalPrice: 10,
+      courseType: "essai",
+      duration: "trial",
+    });
+  };
 
   return (
     <div className="trialContainer">
@@ -75,26 +78,30 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
 
       <form onSubmit={handleSubmit}>
         <div className="availabilityList">
-          {trialCourses.map((course, index) => (
-            <label
-              key={index}
-              className={`availabilityItem ${
-                selectedDateIndex === index ? "selected" : ""
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={selectedDateIndex === index}
-                onChange={() => setSelectedDateIndex(index)}
-              />
-              <span className="checkbox-custom">
-                {selectedDateIndex === index && <AiOutlineCheck />}
-              </span>
-              <span className="date">{course.date}</span> -{" "}
-              <span className="time">{course.time}</span> -{" "}
-              <span className="place">{course.place}</span>
-            </label>
-          ))}
+          {trialCourses.length > 0 ? (
+            trialCourses.map((course, index) => (
+              <label
+                key={course._id || index}
+                className={`availabilityItem ${
+                  selectedDateIndex === index ? "selected" : ""
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedDateIndex === index}
+                  onChange={() => setSelectedDateIndex(index)}
+                />
+                <span className="checkbox-custom">
+                  {selectedDateIndex === index && <AiOutlineCheck />}
+                </span>
+                <span className="date">{course.date}</span> -{" "}
+                <span className="time">{course.time}</span> -{" "}
+                <span className="place">{course.place}</span>
+              </label>
+            ))
+          ) : (
+            <p>Aucun cours d'essai disponible pour le moment.</p>
+          )}
         </div>
 
         <div className="buttons-group">
@@ -104,7 +111,11 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData }) => {
               Précédent
             </button>
           )}
-          <button type="submit" className="btn-next-step">
+          <button
+            type="submit"
+            className="btn-next-step"
+            disabled={trialCourses.length === 0}
+          >
             Suivant <HiArrowLongRight />
           </button>
         </div>

@@ -30,10 +30,11 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
       };
     }
     if (dataType === "courses") {
+      // ✅ CORRECTION ICI : utiliser les bonnes clés
       return {
         courses: {
-          trials: fetchedData.courses?.trials || [],
-          classics: fetchedData.courses?.classics || [],
+          trials: fetchedData.trialCourses || [],
+          classics: fetchedData.courses || [],
         },
         capacities: {
           trialCapacities: fetchedData.capacities?.trialCapacities || [],
@@ -44,57 +45,47 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
     return {};
   }, [dataType, fetchedData]);
 
+  // 🔍 Ajout d'un console.log pour vérifier la structure de data
   useEffect(() => {
-  if (!fetchedData) return;
+    console.log("data transformé :", data);
+  }, [data]);
 
-  if (dataType === "traineeship") {
-    setFormData({
-      title: fetchedData.title,
-      date: fetchedData.date,
-      hours: fetchedData.hours,
-      numberOfPlaces: fetchedData.numberOfPlaces,
-      _id: fetchedData._id,
-    });
-  }
+  useEffect(() => {
+    if (!fetchedData) return;
 
-  if (dataType === "show") {
-    setFormData({
-      title: fetchedData.title,
-      date: fetchedData.date,
-      hours: fetchedData.hours,
-      numberOfPlaces: fetchedData.numberOfPlaces,
-      _id: fetchedData._id,
-      alt: fetchedData.alt,
-      img: fetchedData.img
-    });
-  }
+    if (dataType === "traineeship") {
+      setFormData({
+        title: fetchedData.title,
+        date: fetchedData.date,
+        hours: fetchedData.hours,
+        numberOfPlaces: fetchedData.numberOfPlaces,
+        place: fetchedData.place,
+        _id: fetchedData._id,
+      });
+    }
 
-  if (dataType === "courses") {
-    setFormData({
-      nom: "",
-      telephone: "",
-      email: "",
-      message: "",
-      courseType: "",
-      ageGroup: "",
-      trialCourse: null,
-      classicCourses: {},
-      totalPrice: 0,
-      ...fetchedData.courses, 
-    });
-  }
-}, [fetchedData, dataType]);
-
+    if (dataType === "show") {
+      setFormData({
+        title: fetchedData.title,
+        date: fetchedData.date,
+        hours: fetchedData.hours,
+        numberOfPlaces: fetchedData.numberOfPlaces,
+        place: fetchedData.place,
+        _id: fetchedData._id,
+        alt: fetchedData.alt,
+        img: fetchedData.img,
+      });
+    }
+  }, [fetchedData, dataType]);
 
   // Helper pour trouver la capacité d'un cours
   const getCourseCapacity = (courseId, capacitiesArray) => {
-    return capacitiesArray?.find(cap => cap.id === courseId);
+    return capacitiesArray?.find((cap) => cap.id === courseId);
   };
 
   // Réinitialiser le modal quand le dataType change
   useEffect(() => {
     setCurrentStep(0);
-    //setFormData({});
   }, [dataType]);
 
   // Fonction pour générer un numéro de commande aléatoire

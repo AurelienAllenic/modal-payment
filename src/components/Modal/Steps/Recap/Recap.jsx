@@ -12,25 +12,47 @@ const Recap = ({
   onReserve,
   showPrevButton,
 }) => {
-  console.log("Recap → formData :", formData, "dataType :", dataType, "data :", data );
+  console.log("Recap → formData :", formData, "dataType :", dataType, "data :", data);
 
   const API_BASE_URL = (() => {
-  const isLocal = import.meta.env.MODE === "development"; 
-  const raw = isLocal
-    ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
-    : import.meta.env.VITE_BACKEND_URL || "";
-  const clean = raw.replace(/\/+$/, "");
-  return clean.endsWith("/api") ? clean : `${clean}/api`;
-})();
+    const isLocal = import.meta.env.MODE === "development";
+    const raw = isLocal
+      ? import.meta.env.VITE_BACKEND_LOCAL_URL || ""
+      : import.meta.env.VITE_BACKEND_URL || "";
+    const clean = raw.replace(/\/+$/, "");
+    return clean.endsWith("/api") ? clean : `${clean}/api`;
+  })();
 
- 
   const eventData = data?.event || {};
+
+  // ✅ Fonction pour récupérer l'eventId selon le type
+  const getEventId = () => {
+    if (dataType === "courses") {
+      // Pour les cours d'essai
+      if (formData.courseType === "essai" && formData.trialCourse?._id) {
+        return formData.trialCourse._id.toString();
+      }
+      // Pour les cours classiques - tu peux adapter selon ta structure
+      // Si tu as un ID principal pour les cours classiques
+      if (formData.classicCourses) {
+        // Option 1 : prendre l'ID du premier cours
+        const firstCourse = Object.values(formData.classicCourses).find(c => c?._id);
+        if (firstCourse?._id) {
+          return firstCourse._id.toString();
+        }
+      }
+      return "course-multiple"; // Fallback pour cours multiples
+    }
+    
+    // Pour stages et spectacles
+    return formData._id?.toString() || "";
+  };
 
   const handleReserve = async () => {
     try {
-      let items = []; // Tableau d'items envoyé à Stripe
+      let items = [];
   
-      // === STAGES → 1 ligne par participant (comme les spectacles) ===
+      // === STAGES → 1 ligne par participant ===
       if (dataType === "traineeship") {
         const stagePriceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
         const nbParticipants = formData.nombreParticipants || 1;
@@ -40,7 +62,6 @@ const Recap = ({
           return;
         }
   
-        // On ajoute une ligne séparée pour chaque participant
         for (let i = 0; i < nbParticipants; i++) {
           items.push({ price: stagePriceId, quantity: 1 });
         }
@@ -79,9 +100,16 @@ const Recap = ({
         items = [{ price: priceId, quantity: 1 }];
       }
   
-  
-      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+      // ✅ Récupération de l'eventId avec la fonction helper
+      const eventId = getEventId();
+      
+      if (!eventId) {
+        alert("Erreur : ID de l'événement manquant");
+        console.error("formData:", formData);
+        return;
+      }
 
+      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +117,7 @@ const Recap = ({
           customerEmail: formData.email,
           metadata: {
             type: dataType,
-            eventId: formData._id.toString(), // LA LIGNE QUI CHANGE TOUT (obligatoire)
+            eventId: eventId, // ✅ Utilisation de la fonction helper
 
             // Infos client
             nom: formData.nom,
@@ -106,20 +134,21 @@ const Recap = ({
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
 
-            // Bonus propre pour les cours d'essai (fortement recommandé)
+            // ✅ ID spécifique pour les cours d'essai
             trialCourseId: formData.courseType === "essai" && formData.trialCourse?._id
               ? formData.trialCourse._id.toString()
-              : null,
+              : "",
 
-            // Tu peux garder ces champs pour l'affichage dans l'email (inoffensifs)
+            // Infos d'affichage pour l'email
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
             eventHours: eventData?.hours || "",
 
-            // Tu peux supprimer ces deux lignes si tu veux (plus utilisées par le back)
-            // trialCourse: formData.trialCourse ? JSON.stringify(formData.trialCourse) : null,
-            // classicCourses: formData.classicCourses ? JSON.stringify(formData.classicCourses) : null,
+            // ✅ Ajout des détails du cours d'essai pour l'email
+            trialCourseDate: formData.trialCourse?.date || "",
+            trialCourseTime: formData.trialCourse?.time || "",
+            trialCoursePlace: formData.trialCourse?.place || "",
           },
         }),
       });
@@ -243,7 +272,7 @@ const Recap = ({
             <>
               <p>Cours :</p>
               <ul>
-                <li>Catégorie d’âge : {formData.ageGroup}</li>
+                <li>Catégorie d'âge : {formData.ageGroup}</li>
                 <li>Type de cours : {formData.courseType}</li>
 
                 {formData.courseType === "essai" && formData.trialCourse && (

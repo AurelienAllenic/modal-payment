@@ -128,7 +128,7 @@ const Success = () => {
             <h3>Vos informations</h3>
             <p><strong>Nom :</strong> {formData.nom}</p>
             <p><strong>Email :</strong> {formData.email}</p>
-            <p><strong>Téléphone :</strong> {formData.telephone}</p>
+            <p><strong>Téléphone :</strong> {formData?.telephone} || {formData?.phone} </p>
           </div>
 
           {/* STAGE */}
@@ -164,7 +164,7 @@ const Success = () => {
               <p>Catégorie : {formData.ageGroup}</p>
               <p>Type : {formData.courseType === "essai" ? "Cours d’essai" : "Cours régulier"}</p>
 
-              {formData.courseType === "essai" && formData.trialCourse && (
+              {formData.courseType === "essai" && (
                 <>
                   <p>Date : {formData.trialCourse.date}</p>
                   <p>Heure : {formData.trialCourse.time}</p>
@@ -172,7 +172,7 @@ const Success = () => {
                 </>
               )}
 
-              {formData.courseType !== "essai" && formData.classicCourses && (
+              {formData.courseType !== "essai" && (
                 <>
                   <p><strong>Cours sélectionnés :</strong></p>
                   {Object.entries(formData.classicCourses)
