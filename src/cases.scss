@@ -1,0 +1,31 @@
+.no-places-available {
+    text-align: center;
+    padding: 3rem 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+    border: 2px solid #ff6b6b;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+  }
+  
+  .no-places-available h2 {
+    color: #d32f2f;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+  
+  .no-places-available p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0.8rem 0;
+    line-height: 1.6;
+  }
+  
+  .no-places-available p:last-child {
+    color: #888;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    font-style: italic;
+  }

@@ -1,6 +1,8 @@
 // ButtonModal.jsx
 import { useState } from "react";
+import { HiArrowRight } from "react-icons/hi2";
 import Modal from "../Modal/Modal";
+import "./buttonModal.scss";
 
 const ButtonModal = ({ text, data, dataType }) => {
   const [showModal, setShowModal] = useState(false);
@@ -23,7 +25,8 @@ const ButtonModal = ({ text, data, dataType }) => {
     <div className="btn-payment-modal-wrapper">
       {!showModal ? (
         <button className="btn-payment-modal" onClick={openModal}>
-          {text} <span className="icon-btn-modal">👉</span>
+          <span className="btn-text">{text}</span>
+          <HiArrowRight className="icon-btn-modal" />
         </button>
       ) : (
         <Modal

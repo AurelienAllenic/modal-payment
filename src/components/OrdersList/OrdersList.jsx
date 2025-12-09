@@ -3,9 +3,10 @@ import "./ordersList.scss";
 
 const TABS = [
   { key: "all", label: "Toutes les commandes", count: 0 },
-  { key: "traineeship", label: "Stages", icon: "Stage" },
-  { key: "show", label: "Spectacles", icon: "Show" },
-  { key: "courses", label: "Cours", icon: "Courses" },
+  { key: "traineeship", label: "Stages", icon: "🎭" },
+  { key: "show", label: "Spectacles", icon: "🎪" },
+  { key: "trial-course", label: "Cours d'essai", icon: "🎯" },
+  { key: "classic-course", label: "Cours classiques", icon: "📚" },
 ];
 
 const OrdersList = () => {
@@ -17,35 +18,52 @@ const OrdersList = () => {
 
   // Chargement une seule fois
   useEffect(() => {
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
-        credentials: "include",
-        mode: "cors",
-      });
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
+          credentials: "include",
+          mode: "cors",
+        });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Erreur serveur" }));
-        throw new Error(err.error || `HTTP ${res.status}`);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: "Erreur serveur" }));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+
+        const json = await res.json();
+        console.log("📦 Commandes reçues:", json.data); // ✅ DEBUG
+        
+        // Afficher spécifiquement les cours
+        const coursesOrders = json.data.filter(o => o.type === "courses");
+        console.log("�� Commandes de cours:", coursesOrders);
+        coursesOrders.forEach(order => {
+          console.log(`  → ${order.orderNumber}:`, order.metadata?.courseType);
+        });
+        
+        setAllOrders(json.data || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
+    };
+    fetchOrders();
+  }, []);
 
-      const json = await res.json();
-      setAllOrders(json.data || []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  // Fonction pour déterminer le type précis d'une commande
+  const getOrderType = (order) => {
+    return order.type; // ✅ Le type est maintenant directement correct !
   };
-  fetchOrders();
-}, []);
 
   // Filtrage quand on change d'onglet
   useEffect(() => {
     if (activeTab === "all") {
       setFilteredOrders(allOrders);
     } else {
-      setFilteredOrders(allOrders.filter(order => order.type === activeTab));
+      setFilteredOrders(allOrders.filter(order => {
+        const orderType = getOrderType(order);
+        return orderType === activeTab;
+      }));
     }
   }, [activeTab, allOrders]);
 
@@ -54,14 +72,17 @@ const OrdersList = () => {
     all: allOrders.length,
     traineeship: allOrders.filter(o => o.type === "traineeship").length,
     show: allOrders.filter(o => o.type === "show").length,
-    courses: allOrders.filter(o => o.type === "courses").length,
+    "trial-course": allOrders.filter(o => getOrderType(o) === "trial-course").length,
+    "classic-course": allOrders.filter(o => getOrderType(o) === "classic-course").length,
   };
 
-  const getTypeLabel = (type) => {
+  const getTypeLabel = (order) => {
+    const type = getOrderType(order);
     switch (type) {
-      case "traineeship": return "Stage";
-      case "show": return "Spectacle";
-      case "courses": return "Cours";
+      case "traineeship": return "🎭 Stage";
+      case "show": return "🎪 Spectacle";
+      case "trial-course": return "🎯 Cours d'essai";
+      case "classic-course": return "📚 Cours classique";
       default: return type;
     }
   };
@@ -81,6 +102,7 @@ const OrdersList = () => {
             className={`tab ${activeTab === tab.key ? "active" : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
+            {tab.icon && <span className="tab-icon">{tab.icon}</span>}
             {tab.label}
             <span className="tab-count">{counts[tab.key]}</span>
           </button>
@@ -97,6 +119,7 @@ const OrdersList = () => {
               <tr>
                 <th>Date</th>
                 <th>Numéro</th>
+                <th>Type</th>
                 <th>Client</th>
                 <th>Email</th>
                 <th>Téléphone</th>
@@ -110,6 +133,11 @@ const OrdersList = () => {
                 <tr key={order.id}>
                   <td>{order.date}</td>
                   <td><strong>{order.orderNumber}</strong></td>
+                  <td>
+                    <span className={`type-badge type-${getOrderType(order)}`}>
+                      {getTypeLabel(order)}
+                    </span>
+                  </td>
                   <td>{order.customer}</td>
                   <td>{order.email}</td>
                   <td>{order.phone}</td>
@@ -117,7 +145,7 @@ const OrdersList = () => {
                   <td><strong>{order.amount}</strong></td>
                   <td>
                     <span className={`status status-${order.status}`}>
-                      {order.status === "paid" ? "Payée" : order}
+                      {order.status === "paid" ? "Payée" : order.status}
                     </span>
                   </td>
                 </tr>
