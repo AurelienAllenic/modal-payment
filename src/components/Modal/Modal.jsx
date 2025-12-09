@@ -13,9 +13,6 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
-  console.log("fetchedData :", fetchedData);
-
-  // 🔧 EXTRACTION DES DONNÉES depuis fetchedData
   const data = React.useMemo(() => {
     if (dataType === "traineeship") {
       return {
@@ -30,7 +27,6 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
       };
     }
     if (dataType === "courses") {
-      // ✅ CORRECTION ICI : utiliser les bonnes clés
       return {
         courses: {
           trials: fetchedData.trialCourses || [],
@@ -44,11 +40,6 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
     }
     return {};
   }, [dataType, fetchedData]);
-
-  // 🔍 Ajout d'un console.log pour vérifier la structure de data
-  useEffect(() => {
-    console.log("data transformé :", data);
-  }, [data]);
 
   useEffect(() => {
     if (!fetchedData) return;
@@ -78,24 +69,20 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
     }
   }, [fetchedData, dataType]);
 
-  // Helper pour trouver la capacité d'un cours
   const getCourseCapacity = (courseId, capacitiesArray) => {
     return capacitiesArray?.find((cap) => cap.id === courseId);
   };
 
-  // Réinitialiser le modal quand le dataType change
   useEffect(() => {
     setCurrentStep(0);
   }, [dataType]);
 
-  // Fonction pour générer un numéro de commande aléatoire
   const generateOrderNumber = () => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
     return `CMD-${timestamp}-${random}`;
   };
 
-  // Configuration des étapes selon le type
   const getStepsConfig = () => {
     switch (dataType) {
       case "traineeship":
@@ -139,8 +126,6 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
 
     if (currentStep < config.totalSteps - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      console.log("Données finales:", updatedFormData);
     }
   };
 
@@ -153,13 +138,6 @@ const Modal = ({ dataType, fetchedData, onClose, isClosing }) => {
   const handleReserve = () => {
     const orderNumber = generateOrderNumber();
 
-    console.log("Réservation finale:", {
-      orderNumber,
-      formData,
-      data,
-    });
-
-    // Redirection vers Success avec les données
     navigate("/success", {
       state: {
         orderNumber,

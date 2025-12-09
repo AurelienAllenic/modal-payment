@@ -15,13 +15,11 @@ const CourseType = ({
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("");
   const [selectedCourseType, setSelectedCourseType] = useState("");
 
-  // ✅ Vérifier si des cours d'essai sont disponibles
   const hasAvailableTrialCourses = useMemo(() => {
     const trialCourses = data?.courses?.trials || [];
     return trialCourses.some(course => course.numberOfPlaces > 0);
   }, [data]);
 
-  // ✅ AJOUT : Vérifier si des cours classiques sont disponibles
   const hasAvailableClassicCourses = useMemo(() => {
     const classicCourses = data?.courses?.classics || [];
     return classicCourses.some(course => course.numberOfPlaces > 0);
@@ -49,7 +47,6 @@ const CourseType = ({
   const getStepIcon = () =>
     stepNumber === 1 ? <PiNumberCircleOneThin className="stepIcon" /> : null;
 
-  // ✅ Liste des types de cours avec condition d'affichage
   const courseTypes = [
     { 
       val: "essai", 
@@ -59,21 +56,20 @@ const CourseType = ({
     { 
       val: "trimestre", 
       label: "Cours au trimestre (200€ à 400€)", 
-      show: hasAvailableClassicCourses // ✅ Condition ajoutée
+      show: hasAvailableClassicCourses
     },
     { 
       val: "semestre", 
       label: "Cours au semestre (300€ à 600€)", 
-      show: hasAvailableClassicCourses // ✅ Condition ajoutée
+      show: hasAvailableClassicCourses
     },
     { 
       val: "annee", 
       label: "Cours à l'année (600€ à 800€)", 
-      show: hasAvailableClassicCourses // ✅ Condition ajoutée
+      show: hasAvailableClassicCourses
     },
   ];
 
-  // ✅ AJOUT : Vérifier si au moins un type de cours est disponible
   const hasAnyAvailableCourses = hasAvailableTrialCourses || hasAvailableClassicCourses;
 
   return (
@@ -110,7 +106,6 @@ const CourseType = ({
           <div className="section">
             <h3>Quel type de cours souhaitez-vous réserver ?</h3>
             
-            {/* ✅ AJOUT : Si aucun cours disponible, afficher un message */}
             {!hasAnyAvailableCourses ? (
               <div className="no-courses-message">
                 <p>😔 Plus aucun cours disponible actuellement.</p>
@@ -136,7 +131,6 @@ const CourseType = ({
                     ))}
                 </div>
                 
-                {/* ✅ Messages informatifs spécifiques */}
                 {!hasAvailableTrialCourses && hasAvailableClassicCourses && (
                   <p className="info-message">
                     ℹ️ Les cours à l'essai sont actuellement complets.
@@ -162,7 +156,7 @@ const CourseType = ({
           <button 
             type="submit" 
             className="btn-next-step"
-            disabled={!hasAnyAvailableCourses} // ✅ Désactiver si aucun cours
+            disabled={!hasAnyAvailableCourses}
           >
             Suivant <HiArrowLongRight />
           </button>

@@ -25,45 +25,34 @@ function AppContent() {
 
   const fetchAll = async () => {
     try {
-      console.log("[App] Chargement des données...");
       
-      // ⭐ 1. Traineeship
       const tRes = await fetch(`${API_BASE_URL}/traineeships`);
       const tList = await tRes.json();
-      console.log("[App] Traineeships récupérés:", tList);
       setTraineeship(tList[0] || null);
 
-      // ⭐ 2. Show
       const sRes = await fetch(`${API_BASE_URL}/shows`);
       const sList = await sRes.json();
-      console.log("[App] Shows récupérés:", sList);
       setShowData(Array.isArray(sList) ? sList[0] : sList);
 
-      // ⭐ 3. Trial courses
       const trRes = await fetch(`${API_BASE_URL}/trial-courses`);
       const trList = await trRes.json();
       setTrialCourses(Array.isArray(trList) ? trList : []);
 
-      // ⭐ 4. Classic courses
       const cRes = await fetch(`${API_BASE_URL}/classic-courses`);
       const cList = await cRes.json();
       setCourses(Array.isArray(cList) ? cList : []);
-      
-      console.log("[App] Toutes les données chargées");
+
     } catch (err) {
       console.error("Erreur App.js fetchAll:", err);
     }
   };
 
-  // Charger au montage
   useEffect(() => {
     fetchAll();
   }, [API_BASE_URL]);
 
-  // Recharger quand on revient sur une page de réservation
   useEffect(() => {
     if (location.pathname.includes("-reservation")) {
-      console.log("[App] Rechargement des données (changement de route)");
       fetchAll();
     }
   }, [location.pathname]);

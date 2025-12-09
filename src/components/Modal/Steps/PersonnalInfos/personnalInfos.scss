@@ -5,29 +5,47 @@
   flex-direction: column;
   gap: 25px;
   color: #000;
-  width: 85%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 0 25px;
+  
+  @media (max-width: 625px) {
+    padding: 0 15px;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 420px) {
+    padding: 0 10px;
+  }
 
   .PersonalInfosTitle {
     display: flex;
     gap: 15px;
     align-items: center;
+    flex-wrap: wrap;
+    
     @media (max-width: 625px) {
-      padding: 20px 50px 0 10px;
+      padding: 20px 0 0 0;
     }
     @media (max-width: 420px) {
-      padding: 20px 40px 0 10px;
+      padding: 20px 0 0 0;
     }
 
     .stepIcon {
       width: 35px;
       height: 35px;
+      flex-shrink: 0;
     }
 
     h2 {
       font-size: 28px;
+      word-break: break-word;
+      
       @media (max-width: 625px) {
         font-size: 20px;
-        text-align: center;
+        text-align: left;
       }
       @media (max-width: 420px) {
         font-size: 18px;
@@ -38,46 +56,78 @@
   form {
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
-    padding: 0 25px;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 
     .personnalInfosFormContainer {
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      padding: 0 25px;
+      padding: 0;
       gap: 25px;
+      width: 100%;
+      box-sizing: border-box;
 
       .inputsGroup {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 50px;
+        gap: 30px;
         align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        
         @media (max-width: 1184px) {
-          gap: 25px;
+          gap: 20px;
         }
         @media (max-width: 625px) {
-          gap: 10px;
+          gap: 15px;
+          flex-direction: column;
         }
 
         .singleInput {
-          flex: 0 0 calc(25% - 100px);
+          flex: 0 0 auto;
+          min-width: 200px;
+          width: 250px;
           display: flex;
           gap: 5px;
           flex-direction: column;
+          box-sizing: border-box;
+          
+          @media (max-width: 1184px) {
+            width: 220px;
+          }
+          
+          @media (max-width: 625px) {
+            width: 100%;
+            min-width: unset;
+          }
 
           label {
             font-size: 20px;
+            word-break: break-word;
+            
+            @media (max-width: 625px) {
+              font-size: 18px;
+            }
           }
 
           input {
             background: #fff;
             color: #000;
-            border: none;
             min-height: 25px;
             padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            width: 100%;
+            
+            &:focus {
+              outline: none;
+              border-color: #666;
+            }
           }
         }
       }
@@ -85,18 +135,26 @@
       .textareaContainer {
         display: flex;
         justify-content: center;
-        width: 500px;
+        width: 100%;
+        max-width: 500px;
         gap: 5px;
         flex-direction: column;
+        box-sizing: border-box;
+        
         @media (max-width: 625px) {
-          width: 300px;
+          max-width: 100%;
         }
         @media (max-width: 420px) {
-          width: 250px;
+          max-width: 100%;
         }
 
         label {
           font-size: 20px;
+          word-break: break-word;
+          
+          @media (max-width: 625px) {
+            font-size: 18px;
+          }
         }
 
         textarea {
@@ -104,8 +162,16 @@
           resize: none;
           background: #fff;
           color: #000;
-          border: none;
+          border: 1px solid #ccc;
           padding: 8px;
+          border-radius: 5px;
+          box-sizing: border-box;
+          width: 100%;
+          
+          &:focus {
+            outline: none;
+            border-color: #666;
+          }
         }
       }
 
@@ -115,16 +181,25 @@
         gap: 10px;
         justify-content: flex-start;
         align-items: flex-start;
-        width: 500px;
+        width: 100%;
+        max-width: 500px;
+        box-sizing: border-box;
+        position: relative;
+        
         @media (max-width: 625px) {
-          width: 300px;
+          max-width: 100%;
         }
         @media (max-width: 420px) {
-          width: 250px;
+          max-width: 100%;
         }
 
         label {
           font-size: 20px;
+          word-break: break-word;
+          
+          @media (max-width: 625px) {
+            font-size: 18px;
+          }
         }
 
         .number-selector-wrapper {
@@ -172,6 +247,7 @@
                 width: 20px;
                 height: 20px;
                 fill: #000;
+                flex-shrink: 0;
               }
 
               &:hover {
@@ -192,15 +268,23 @@
 
 .buttons-group {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: relative;
-  width: calc(100% - 40px);
+  width: 100%;
+  padding: 0;
   margin-top: 30px;
+  box-sizing: border-box;
+  gap: 15px;
+  
+  @media (max-width: 625px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 
   .btn-prev-step {
     background: transparent;
     border: 1px solid #000;
-    padding: 5px 15px;
+    padding: 8px 20px;
     color: #000;
     font-size: 16px;
     border-radius: 5px;
@@ -209,19 +293,27 @@
     gap: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    
+    @media (max-width: 625px) {
+      justify-content: center;
+      width: 100%;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
 
     &:hover {
-      transform: scale(1.01);
+      transform: scale(1.02);
+      background: #f0f0f0;
     }
   }
 
   .btn-next-step {
-    position: absolute;
-    right: 0;
-    bottom: 0;
     background: transparent;
     border: 1px solid #000;
-    padding: 5px 15px;
+    padding: 8px 20px;
     color: #000;
     font-size: 16px;
     border-radius: 5px;
@@ -229,15 +321,35 @@
     align-items: center;
     gap: 15px;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    margin-left: auto;
+    
     @media (max-width: 625px) {
-      right: -35px;
-      bottom: 25px;
+      justify-content: center;
+      width: 100%;
+      margin-left: 0;
+    }
+
+    svg {
+      flex-shrink: 0;
     }
 
     &:hover {
       transition: all 0.2s ease;
-      transform: scale(1.01);
+      transform: scale(1.02);
       cursor: pointer;
+      background: #f0f0f0;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

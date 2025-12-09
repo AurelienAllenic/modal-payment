@@ -40,11 +40,10 @@ const Classic = ({
       return;
     }
 
-    const ageGroup = formData?.ageGroup; // "enfant", "ado", "adulte"
+    const ageGroup = formData?.ageGroup;
     const isChild = ageGroup === "enfant";
-    const type = formData?.courseType; // "trimestre", "semestre", "annee"
+    const type = formData?.courseType;
 
-    // Construction du préfixe
     let prefix = "";
     if (type === "trimestre") {
       prefix = selectedCount === 1 ? "trimester" : `trimester${selectedCount}`;
@@ -61,12 +60,9 @@ const Classic = ({
     const priceKey = prefix + suffix;
 
     const price = prices[priceKey] || 0;
-    console.log("Prix calculé :", priceKey, "→", price); // Debug temporaire
 
     setTotalPrice(price);
   }, [selectedCourses, formData?.courseType, formData?.ageGroup]);
-
-  // Important : on dépend aussi de ageGroup ici ↑
 
   const handleSelectCourse = (day, course) => {
     setSelectedCourses((prev) => ({
@@ -89,7 +85,6 @@ const Classic = ({
       return;
     }
 
-    // Recalcul final (sécurité)
     const isChild = formData.ageGroup === "enfant";
     const type = formData.courseType;
     let prefix = "";
@@ -102,8 +97,8 @@ const Classic = ({
     onNext({
       classicCourses: selectedCourses,
       totalPrice: finalPrice,
-      duration: formData.courseType,        // important pour Stripe
-      nbCoursesPerWeek: selectedCount,      // très important
+      duration: formData.courseType,
+      nbCoursesPerWeek: selectedCount,
     });
   };
 
@@ -135,7 +130,7 @@ const Classic = ({
               <div className="container-options-day">
                 {coursesData
                   .filter((course) => course.day?.toLowerCase() === day.toLowerCase())
-                  .filter((course) => course.numberOfPlaces > 0) // ✅ AJOUT : Filtrer les cours sans places
+                  .filter((course) => course.numberOfPlaces > 0)
                   .map((course, index) => (
                     <label
                       key={index}
@@ -152,7 +147,6 @@ const Classic = ({
                       <span>{course.date} - {course.time} - {course.place}</span>
                     </label>
                   ))}
-                {/* ✅ AJOUT : Message si aucun cours disponible pour ce jour */}
                 {coursesData
                   .filter((course) => course.day?.toLowerCase() === day.toLowerCase())
                   .filter((course) => course.numberOfPlaces > 0).length === 0 && (

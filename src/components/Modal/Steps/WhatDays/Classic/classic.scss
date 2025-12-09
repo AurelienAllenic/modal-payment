@@ -77,14 +77,12 @@
         gap: 0.5rem;
         max-height: calc(
           3 * 3.5rem
-        ); // environ 3 éléments visibles (hauteur approximative)
+        );
         overflow-y: auto;
-        padding-right: 0.3rem; // espace pour la scrollbar
-        /* Firefox */
+        padding-right: 0.3rem;
         scrollbar-width: thin;
         scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
 
-        /* Chrome / Safari / Edge */
         &::-webkit-scrollbar {
           width: 6px;
           background: transparent;
@@ -194,8 +192,7 @@
   font-style: italic;
 }
 
-// Responsive : une seule colonne sur mobile
-@media (max-width: 768px) {
+@media (max-width: 1035px) {
   .classicGrid {
     flex-direction: column;
 

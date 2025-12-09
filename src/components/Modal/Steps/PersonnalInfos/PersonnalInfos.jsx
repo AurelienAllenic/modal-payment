@@ -12,7 +12,9 @@ const PersonnalInfos = ({
   initialData,
   showPrevButton,
 }) => {
-  console.log(initialData, "initialData")
+  
+  const maxPlaces = initialData?.numberOfPlaces || 999;
+  
   const [formData, setFormData] = useState({
     nom: initialData?.nom || "",
     telephone: initialData?.telephone || "",
@@ -23,7 +25,8 @@ const PersonnalInfos = ({
     }),
   });
 
-  // ✅ Ajoute cet useEffect pour mettre à jour quand initialData change
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -47,14 +50,38 @@ const PersonnalInfos = ({
   };
 
   const handleNumberChange = (increment) => {
-    setFormData((prev) => ({
-      ...prev,
-      nombreParticipants: Math.max(1, prev.nombreParticipants + increment),
-    }));
+    setFormData((prev) => {
+      const newValue = prev.nombreParticipants + increment;
+      
+      if (increment > 0 && newValue > maxPlaces) {
+        setErrorMessage(`Maximum de places atteint`);
+        setTimeout(() => setErrorMessage(""), 3000);
+        return prev;
+      }
+      
+      if (newValue < 1) {
+        setErrorMessage("Minimum de 1 participant requis");
+        setTimeout(() => setErrorMessage(""), 3000);
+        return prev;
+      }
+      
+      setErrorMessage("");
+      
+      return {
+        ...prev,
+        nombreParticipants: newValue,
+      };
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (isNumberSelector && formData.nombreParticipants > maxPlaces) {
+      setErrorMessage(`Désolé, il ne reste que ${maxPlaces} place(s) disponible(s).`);
+      return;
+    }
+    
     onNext({
       nom: formData.nom,
       telephone: formData.telephone,
@@ -122,7 +149,9 @@ const PersonnalInfos = ({
           </div>
           {isNumberSelector && (
             <div className="numberSelectorContainer">
-              <label>Nombre de participants</label>
+              <label>
+                Nombre de participants
+              </label>
               <div className="number-selector-wrapper">
                 <div className="number-display">
                   {formData.nombreParticipants}
@@ -144,6 +173,25 @@ const PersonnalInfos = ({
                   </button>
                 </div>
               </div>
+              {errorMessage && (
+                <p style={{
+                  position: 'absolute',
+                  color: '#d32f2f',
+                  fontSize: '14px',
+                  marginTop: '8px',
+                  fontWeight: '500',
+                  animation: 'fadeIn 0.3s ease-in',
+                  backgroundColor: '#ffebee',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #ef9a9a',
+                  whiteSpace: 'nowrap',
+                  zIndex: 10,
+                  boxShadow: '0 2px 8px rgba(211, 47, 47, 0.2)'
+                }}>
+                  ⚠️ {errorMessage}
+                </p>
+              )}
             </div>
           )}
         </div>

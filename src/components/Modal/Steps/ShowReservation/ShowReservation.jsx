@@ -17,30 +17,46 @@ const ShowReservation = ({
   showPrevButton,
   show,
 }) => {
-  console.log(initialData, 'initialData')
+  
+  const maxPlaces = initialData?.numberOfPlaces || 999;
+  
   const [formData, setFormData] = useState({
     adultes: initialData?.adultes || 0,
     enfants: initialData?.enfants || 0,
   });
 
-  useEffect(() => {
-  if (initialData) {
-    setFormData(prev => ({
-      ...prev, // garde ce qui existe déjà (adultes/enfants, etc.)
-      ...initialData, // ajoute ou remplace les champs venant de initialData
-      adultes: initialData.adultes ?? prev.adultes ?? 0,
-      enfants: initialData.enfants ?? prev.enfants ?? 0,
-    }));
-  }
-  console.log('modifiedInitialData : ', initialData);
-}, [initialData]);
+  const [errorMessage, setErrorMessage] = useState("");
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({
+        ...prev,
+        ...initialData,
+        adultes: initialData.adultes ?? prev.adultes ?? 0,
+        enfants: initialData.enfants ?? prev.enfants ?? 0,
+      }));
+    }
+  }, [initialData]);
 
   const handleNumberChange = (type, increment) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: Math.max(0, prev[type] + increment),
-    }));
+    setFormData((prev) => {
+      const newValue = Math.max(0, prev[type] + increment);
+      const otherType = type === "adultes" ? "enfants" : "adultes";
+      const total = newValue + prev[otherType];
+      
+      if (increment > 0 && total > maxPlaces) {
+        setErrorMessage("Maximum de places atteint");
+        setTimeout(() => setErrorMessage(""), 3000);
+        return prev;
+      }
+      
+      setErrorMessage("");
+      
+      return {
+        ...prev,
+        [type]: newValue,
+      };
+    });
   };
 
   const handleSubmit = (e) => {
@@ -49,6 +65,13 @@ const ShowReservation = ({
       alert("Veuillez sélectionner au moins une place");
       return;
     }
+    
+    const total = formData.adultes + formData.enfants;
+    if (total > maxPlaces) {
+      setErrorMessage(`Désolé, il ne reste que ${maxPlaces} place(s) disponible(s).`);
+      return;
+    }
+    
     onNext(formData);
   };
 
@@ -66,6 +89,7 @@ const ShowReservation = ({
   };
 
   const totalPrice = formData.adultes * prices.show_adult + formData.enfants * prices.show_child;
+  const totalPlaces = formData.adultes + formData.enfants;
 
   return (
     <div className="showReservationContainer">
@@ -76,7 +100,7 @@ const ShowReservation = ({
       <div className="containerBothParts">
         <form onSubmit={handleSubmit} className="showReservationForm">
           <div className="showReservationFormContainer">
-            <div className="placesInputsGroup">
+            <div className="placesInputsGroup" style={{position: 'relative'}}> {/* ✅ AJOUT : position relative */}
               <div className="placeInput">
                 <label>Adultes / 15€</label>
                 <div className="number-selector-wrapper">
@@ -121,7 +145,31 @@ const ShowReservation = ({
                   </div>
                 </div>
               </div>
+              
+              {/* ✅ AJOUT : Message d'erreur */}
+              {errorMessage && (
+                <p style={{
+                  position: 'absolute',
+                  bottom: '-45px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: '#d32f2f',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  animation: 'fadeIn 0.3s ease-in',
+                  backgroundColor: '#ffebee',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #ef9a9a',
+                  whiteSpace: 'nowrap',
+                  zIndex: 10,
+                  boxShadow: '0 2px 8px rgba(211, 47, 47, 0.2)'
+                }}>
+                  ⚠️ {errorMessage}
+                </p>
+              )}
             </div>
+            
             <p className="totalShowReservation">Total : {totalPrice} €</p>
           </div>
           <div className="buttons-group-showReservation">

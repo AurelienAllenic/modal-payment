@@ -118,14 +118,14 @@
   cursor: pointer;
   position: relative;
   font-size: 14px;
-  -webkit-tap-highlight-color: transparent; /* Pour WebKit (Chrome, Safari, mobile) */
-  -webkit-user-select: none; /* Empêche la sélection de texte sur mobile */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
-  user-select: none; /* Standard */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
   input[type="checkbox"] {
-    display: none; // cache la checkbox native
+    display: none;
   }
 
   .checkmark {

@@ -16,7 +16,6 @@ const OrdersList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Chargement une seule fois
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -31,14 +30,8 @@ const OrdersList = () => {
         }
 
         const json = await res.json();
-        console.log("📦 Commandes reçues:", json.data); // ✅ DEBUG
-        
-        // Afficher spécifiquement les cours
+
         const coursesOrders = json.data.filter(o => o.type === "courses");
-        console.log("�� Commandes de cours:", coursesOrders);
-        coursesOrders.forEach(order => {
-          console.log(`  → ${order.orderNumber}:`, order.metadata?.courseType);
-        });
         
         setAllOrders(json.data || []);
       } catch (err) {
@@ -50,12 +43,10 @@ const OrdersList = () => {
     fetchOrders();
   }, []);
 
-  // Fonction pour déterminer le type précis d'une commande
   const getOrderType = (order) => {
-    return order.type; // ✅ Le type est maintenant directement correct !
+    return order.type;
   };
 
-  // Filtrage quand on change d'onglet
   useEffect(() => {
     if (activeTab === "all") {
       setFilteredOrders(allOrders);
@@ -67,7 +58,6 @@ const OrdersList = () => {
     }
   }, [activeTab, allOrders]);
 
-  // Compteurs pour les onglets
   const counts = {
     all: allOrders.length,
     traineeship: allOrders.filter(o => o.type === "traineeship").length,
@@ -94,7 +84,6 @@ const OrdersList = () => {
     <div className="orders-container">
       <h1>Gestion des commandes</h1>
 
-      {/* ONGLETS */}
       <div className="tabs">
         {TABS.map(tab => (
           <button
@@ -109,7 +98,6 @@ const OrdersList = () => {
         ))}
       </div>
 
-      {/* TABLEAU */}
       <div className="table-wrapper">
         {filteredOrders.length === 0 ? (
           <p className="no-orders">Aucune commande dans cette catégorie pour le moment.</p>

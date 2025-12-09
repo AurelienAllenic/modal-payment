@@ -12,7 +12,6 @@ const Recap = ({
   onReserve,
   showPrevButton,
 }) => {
-  console.log("Recap → formData :", formData, "dataType :", dataType, "data :", data);
 
   const API_BASE_URL = (() => {
     const isLocal = import.meta.env.MODE === "development";
@@ -25,14 +24,11 @@ const Recap = ({
 
   const eventData = data?.event || {};
 
-  // ✅ Fonction pour récupérer l'eventId selon le type
   const getEventId = () => {
     if (dataType === "courses") {
-      // Pour les cours d'essai
       if (formData.courseType === "essai" && formData.trialCourse?._id) {
         return formData.trialCourse._id.toString();
       }
-      // Pour les cours classiques
       if (formData.classicCourses) {
         const firstCourse = Object.values(formData.classicCourses).find(c => c?._id);
         if (firstCourse?._id) {
@@ -49,7 +45,6 @@ const Recap = ({
     try {
       let items = [];
   
-      // === STAGES → 1 ligne par participant ===
       if (dataType === "traineeship") {
         const stagePriceId = import.meta.env.VITE_PRICE_TRAINEESHIP;
         const nbParticipants = formData.nombreParticipants || 1;
@@ -64,7 +59,6 @@ const Recap = ({
         }
       }
   
-      // === SPECTACLES → 2 produits séparés (adulte / enfant) ===
       else if (dataType === "show") {
         const adultPriceId = import.meta.env.VITE_PRICE_SHOW_ADULT;
         const childPriceId = import.meta.env.VITE_PRICE_SHOW_CHILD;
@@ -87,7 +81,6 @@ const Recap = ({
         }
       }
   
-      // === COURS (essai ou réguliers) ===
       else if (dataType === "courses") {
         const priceId = getStripePriceId();
         if (!priceId) {
@@ -105,7 +98,6 @@ const Recap = ({
         return;
       }
 
-      // ✅ Préparer les données des cours classiques pour les métadonnées
       let classicCoursesMetadata = {};
       if (formData.courseType !== "essai" && formData.classicCourses) {
         Object.entries(formData.classicCourses)
@@ -128,39 +120,31 @@ const Recap = ({
             type: dataType,
             eventId: eventId,
 
-            // Infos client
             nom: formData.nom,
             email: formData.email,
             telephone: formData.telephone,
 
-            // Quantités réservées
             nombreParticipants: formData.nombreParticipants?.toString() || "",
             adultes: formData.adultes?.toString() || "0",
             enfants: formData.enfants?.toString() || "0",
 
-            // Cours
             ageGroup: formData.ageGroup || "",
             courseType: formData.courseType || "",
             totalPrice: formData.totalPrice?.toString() || "",
             
-            // ✅ Nouvelles infos pour les cours classiques
             duration: formData.duration || "",
             nbCoursesPerWeek: formData.nbCoursesPerWeek?.toString() || "",
 
-            // ID spécifique pour les cours d'essai
             trialCourseId: formData.courseType === "essai" && formData.trialCourse?._id
               ? formData.trialCourse._id.toString()
               : "",
 
-            // Détails du cours d'essai pour l'email
             trialCourseDate: formData.trialCourse?.date || "",
             trialCourseTime: formData.trialCourse?.time || "",
             trialCoursePlace: formData.trialCourse?.place || "",
 
-            // ✅ Détails des cours classiques (décomposés)
             ...classicCoursesMetadata,
 
-            // Infos d'affichage pour l'email (stages/spectacles)
             eventTitle: eventData?.title || "",
             eventPlace: eventData?.place || "",
             eventDate: eventData?.date || "",
@@ -184,14 +168,12 @@ const Recap = ({
     }
   };
 
-  // Calcul du total pour affichage (spectacles)
   const calculateShowTotal = () => {
     const adultes = formData.adultes || 0;
     const enfants = formData.enfants || 0;
     return adultes * 15 + enfants * 10;
   };
 
-  // === Gestion des priceId pour les cours ===
   const getStripePriceId = () => {
     if (dataType !== "courses") return null;
 
@@ -224,7 +206,6 @@ const Recap = ({
     const type = isChild ? "CHILD" : "ADULT";
     const key = `VITE_PRICE_${normalizedDuration}_${nb}_${type}`;
 
-    console.log("Price ID cours →", key, "=", import.meta.env[key]);
     return import.meta.env[key] || null;
   };
 
@@ -241,7 +222,6 @@ const Recap = ({
 
       <div className="containerAllRecap">
         <div className="containerRecapObject">
-          {/* === STAGES === */}
           {dataType === "traineeship" && (
             <>
               <p>Stage :</p>
@@ -258,7 +238,6 @@ const Recap = ({
             </>
           )}
 
-          {/* === SPECTACLES === */}
           {dataType === "show" && (
             <>
               <p>Spectacle :</p>
@@ -283,7 +262,6 @@ const Recap = ({
             </>
           )}
 
-          {/* === COURS === */}
           {dataType === "courses" && (
             <>
               <p>Cours :</p>

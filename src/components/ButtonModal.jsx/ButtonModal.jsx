@@ -1,4 +1,3 @@
-// ButtonModal.jsx
 import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi2";
 import Modal from "../Modal/Modal";
@@ -7,7 +6,6 @@ import "./buttonModal.scss";
 const ButtonModal = ({ text, data, dataType }) => {
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  console.log(data)
 
   const openModal = () => {
     setShowModal(true);

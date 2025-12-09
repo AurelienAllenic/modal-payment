@@ -1,4 +1,3 @@
-// src/pages/Success.jsx
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaSpinner } from "react-icons/fa";
@@ -36,7 +35,6 @@ const Success = () => {
 
         if (!res.ok) throw new Error("Impossible de récupérer la commande");
         const data = await res.json();
-        console.log("DATA :", data);
         setSession(data);
       } catch (err) {
         console.error(err);
@@ -85,7 +83,6 @@ const Success = () => {
   const amount = (session.amount_total / 100).toFixed(2);
   const dataType = metadata.type;
 
-  // ✅ Reconstruction des cours classiques depuis les métadonnées
   const reconstructClassicCourses = () => {
     const courses = {};
     const days = ["Mardi", "Mercredi", "Jeudi"];
@@ -114,12 +111,11 @@ const Success = () => {
     courseType: metadata.courseType || "",
     event: session.event || {}, 
     totalPrice: metadata.totalPrice ? parseFloat(metadata.totalPrice) : amount,
-    classicCourses: reconstructClassicCourses(), // ✅ Reconstruction
+    classicCourses: reconstructClassicCourses(),
     eventTitle: metadata.eventTitle || "",
     eventPlace: metadata.eventPlace || "",
     eventDate: metadata.eventDate || "",
     eventHours: metadata.eventHours || "",
-    // Infos cours d'essai
     trialCourseDate: metadata.trialCourseDate || "",
     trialCourseTime: metadata.trialCourseTime || "",
     trialCoursePlace: metadata.trialCoursePlace || "",
@@ -131,7 +127,6 @@ const Success = () => {
         <FaCheckCircle className="success-icon" />
         <h1>Réservation confirmée !</h1>
 
-        {/* Numéro de commande + copier */}
         <div className="order-number-wrapper">
           <p className="order-number">
             Numéro de commande : <strong>{session.orderNumber || session.id}</strong>
@@ -142,7 +137,6 @@ const Success = () => {
         </div>
 
         <div className="success-details">
-          {/* Informations client */}
           <div className="detail-section">
             <h3>Vos informations</h3>
             <p><strong>Nom :</strong> {formData.nom}</p>
@@ -150,7 +144,6 @@ const Success = () => {
             <p><strong>Téléphone :</strong> {formData.telephone}</p>
           </div>
 
-          {/* STAGE */}
           {dataType === "traineeship" && (
             <div className="detail-section">
               <h3>Détails du stage</h3>
@@ -162,7 +155,6 @@ const Success = () => {
             </div>
           )}
 
-          {/* SPECTACLE */}
           {dataType === "show" && (
             <div className="detail-section">
               <h3>Détails du spectacle</h3>
@@ -176,14 +168,12 @@ const Success = () => {
             </div>
           )}
 
-          {/* COURS */}
           {dataType === "courses" && (
             <div className="detail-section">
               <h3>Détails du cours</h3>
               <p>Catégorie : {formData.ageGroup}</p>
               <p>Type : {formData.courseType === "essai" ? "Cours d'essai" : "Cours régulier"}</p>
 
-              {/* Cours d'essai */}
               {formData.courseType === "essai" && (
                 <>
                   <p>Date : {formData.trialCourseDate}</p>
@@ -192,7 +182,6 @@ const Success = () => {
                 </>
               )}
 
-              {/* ✅ Cours classiques */}
               {formData.courseType !== "essai" && formData.classicCourses && (
                 <>
                   <p><strong>Cours sélectionnés :</strong></p>

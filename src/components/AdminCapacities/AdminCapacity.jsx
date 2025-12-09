@@ -57,7 +57,6 @@ const AdminCapacity = () => {
 
       if (!res.ok) throw new Error("Erreur mise à jour");
 
-      // Mise à jour locale
       setEvents((prev) => {
         const key = 
           type === 'traineeship' ? 'traineeships' :

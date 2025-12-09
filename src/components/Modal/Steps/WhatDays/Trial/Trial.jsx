@@ -25,16 +25,10 @@ const getStepIcon = (stepNumber) => {
 };
 
 const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData, data }) => {
-  console.log("formData Trial:", formData);
-  console.log("data Trial:", data);
 
-  // ✅ Récupérer et filtrer les cours d'essai disponibles (numberOfPlaces > 0)
   const trialCourses = useMemo(() => {
     const courses = data?.courses?.trials || [];
-    // Filtrer uniquement les cours avec des places disponibles
     const availableCourses = courses.filter(course => course.numberOfPlaces > 0);
-    console.log("trialCourses extraits:", courses);
-    console.log("trialCourses disponibles:", availableCourses);
     return availableCourses;
   }, [data]);
 
@@ -57,10 +51,7 @@ const Trial = ({ stepNumber, onNext, onPrev, showPrevButton, formData, data }) =
       return;
     }
 
-    // ✅ Le cours sélectionné contient déjà toutes les données du backend
     const selectedCourse = trialCourses[selectedDateIndex];
-
-    console.log("Cours sélectionné:", selectedCourse);
 
     onNext({
       trialCourse: selectedCourse,

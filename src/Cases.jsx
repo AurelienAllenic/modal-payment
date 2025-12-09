@@ -10,51 +10,33 @@ const Cases = ({ data, type }) => {
     navigate("/");
   };
 
-  // Debug: voir ce qui arrive
-  useEffect(() => {
-    console.log(`[Cases Debug] Type: ${type}`, data);
-    if (data) {
-      console.log(`[Cases Debug] numberOfPlaces:`, data.numberOfPlaces);
-    }
-  }, [data, type]);
-
-  // Vérifier si des places sont disponibles
   const hasPlacesAvailable = () => {
-    // Si pas de données, on ne peut pas réserver
     if (!data) {
-      console.log("[Cases] Pas de données disponibles");
       return false;
     }
 
     if (type === "traineeship" || type === "show") {
       const hasPlaces = data.numberOfPlaces > 0;
-      console.log(`[Cases] ${type} - Places disponibles:`, data.numberOfPlaces, "→", hasPlaces);
       return hasPlaces;
     }
     
-    // ✅ Pour les cours, vérifier si au moins un cours a des places
     if (type === "courses") {
       const classicCourses = data.courses || [];
       const trialCourses = data.trialCourses || [];
-      
-      // Vérifier les cours classiques
+
       const hasClassicPlaces = classicCourses.some(course => 
         course && course.numberOfPlaces > 0
       );
-      
-      // Vérifier les cours d'essai
+
       const hasTrialPlaces = trialCourses.some(course => 
         course && course.numberOfPlaces > 0
       );
       
       const hasPlaces = hasClassicPlaces || hasTrialPlaces;
       
-      console.log(`[Cases] courses - Classiques:`, hasClassicPlaces, "Essai:", hasTrialPlaces, "→", hasPlaces);
-      
       return hasPlaces;
     }
-    
-    // Par défaut, considérer disponible
+
     return true;
   };
 
@@ -65,7 +47,6 @@ const Cases = ({ data, type }) => {
     return "";
   };
 
-  // Si pas de données du tout
   if (!data) {
     return (
       <div className="container-app">
