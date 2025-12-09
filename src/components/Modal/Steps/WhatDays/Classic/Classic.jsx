@@ -135,6 +135,7 @@ const Classic = ({
               <div className="container-options-day">
                 {coursesData
                   .filter((course) => course.day?.toLowerCase() === day.toLowerCase())
+                  .filter((course) => course.numberOfPlaces > 0) // ✅ AJOUT : Filtrer les cours sans places
                   .map((course, index) => (
                     <label
                       key={index}
@@ -151,6 +152,12 @@ const Classic = ({
                       <span>{course.date} - {course.time} - {course.place}</span>
                     </label>
                   ))}
+                {/* ✅ AJOUT : Message si aucun cours disponible pour ce jour */}
+                {coursesData
+                  .filter((course) => course.day?.toLowerCase() === day.toLowerCase())
+                  .filter((course) => course.numberOfPlaces > 0).length === 0 && (
+                  <p className="no-courses-available">Aucun cours disponible ce jour</p>
+                )}
               </div>
             </div>
           ))}

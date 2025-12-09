@@ -186,6 +186,14 @@
   }
 }
 
+.no-courses-available {
+  padding: 1rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
 // Responsive : une seule colonne sur mobile
 @media (max-width: 768px) {
   .classicGrid {

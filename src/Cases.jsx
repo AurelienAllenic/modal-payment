@@ -32,7 +32,29 @@ const Cases = ({ data, type }) => {
       return hasPlaces;
     }
     
-    // Pour les cours, on considère toujours disponible
+    // ✅ Pour les cours, vérifier si au moins un cours a des places
+    if (type === "courses") {
+      const classicCourses = data.courses || [];
+      const trialCourses = data.trialCourses || [];
+      
+      // Vérifier les cours classiques
+      const hasClassicPlaces = classicCourses.some(course => 
+        course && course.numberOfPlaces > 0
+      );
+      
+      // Vérifier les cours d'essai
+      const hasTrialPlaces = trialCourses.some(course => 
+        course && course.numberOfPlaces > 0
+      );
+      
+      const hasPlaces = hasClassicPlaces || hasTrialPlaces;
+      
+      console.log(`[Cases] courses - Classiques:`, hasClassicPlaces, "Essai:", hasTrialPlaces, "→", hasPlaces);
+      
+      return hasPlaces;
+    }
+    
+    // Par défaut, considérer disponible
     return true;
   };
 
@@ -73,7 +95,12 @@ const Cases = ({ data, type }) => {
       ) : (
         <div className="no-places-available">
           <h2>😔 Plus aucune place disponible !</h2>
-          <p>Toutes les places ont été réservées pour cet événement.</p>
+          <p>Toutes les places ont été réservées pour {
+            type === "traineeship" ? "ce stage" :
+            type === "show" ? "ce spectacle" :
+            type === "courses" ? "tous les cours" :
+            "cet événement"
+          }.</p>
           <p>N'hésitez pas à consulter nos autres événements.</p>
         </div>
       )}

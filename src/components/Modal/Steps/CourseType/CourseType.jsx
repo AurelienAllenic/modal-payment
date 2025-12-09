@@ -10,7 +10,7 @@ const CourseType = ({
   onPrev,
   showPrevButton,
   initialData,
-  data, // ✅ Ajout du prop data
+  data,
 }) => {
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("");
   const [selectedCourseType, setSelectedCourseType] = useState("");
@@ -19,6 +19,12 @@ const CourseType = ({
   const hasAvailableTrialCourses = useMemo(() => {
     const trialCourses = data?.courses?.trials || [];
     return trialCourses.some(course => course.numberOfPlaces > 0);
+  }, [data]);
+
+  // ✅ AJOUT : Vérifier si des cours classiques sont disponibles
+  const hasAvailableClassicCourses = useMemo(() => {
+    const classicCourses = data?.courses?.classics || [];
+    return classicCourses.some(course => course.numberOfPlaces > 0);
   }, [data]);
 
   useEffect(() => {
@@ -48,24 +54,27 @@ const CourseType = ({
     { 
       val: "essai", 
       label: "Cours à l'essai (10€)", 
-      show: hasAvailableTrialCourses // Afficher seulement si des places disponibles
+      show: hasAvailableTrialCourses
     },
     { 
       val: "trimestre", 
       label: "Cours au trimestre (200€ à 400€)", 
-      show: true 
+      show: hasAvailableClassicCourses // ✅ Condition ajoutée
     },
     { 
       val: "semestre", 
       label: "Cours au semestre (300€ à 600€)", 
-      show: true 
+      show: hasAvailableClassicCourses // ✅ Condition ajoutée
     },
     { 
       val: "annee", 
       label: "Cours à l'année (600€ à 800€)", 
-      show: true 
+      show: hasAvailableClassicCourses // ✅ Condition ajoutée
     },
   ];
+
+  // ✅ AJOUT : Vérifier si au moins un type de cours est disponible
+  const hasAnyAvailableCourses = hasAvailableTrialCourses || hasAvailableClassicCourses;
 
   return (
     <div className="courseTypeContainer">
@@ -97,30 +106,48 @@ const CourseType = ({
               ))}
             </div>
           </div>
+
           <div className="section">
             <h3>Quel type de cours souhaitez-vous réserver ?</h3>
-            <div className="options">
-              {courseTypes
-                .filter(({ show }) => show) // ✅ Filtrer uniquement les cours à afficher
-                .map(({ val, label }) => (
-                  <label key={val} className="custom-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={selectedCourseType === val}
-                      onChange={() => handleCourseTypeChange(val)}
-                    />
-                    <span className="checkmark">
-                      {selectedCourseType === val && <HiCheck />}
-                    </span>
-                    {label}
-                  </label>
-                ))}
-            </div>
-            {/* ✅ Message optionnel si aucun cours d'essai disponible */}
-            {!hasAvailableTrialCourses && (
-              <p className="info-message">
-                Les cours à l'essai sont actuellement complets.
-              </p>
+            
+            {/* ✅ AJOUT : Si aucun cours disponible, afficher un message */}
+            {!hasAnyAvailableCourses ? (
+              <div className="no-courses-message">
+                <p>😔 Plus aucun cours disponible actuellement.</p>
+                <p>Tous les cours sont complets pour le moment. Veuillez revenir plus tard.</p>
+              </div>
+            ) : (
+              <>
+                <div className="options">
+                  {courseTypes
+                    .filter(({ show }) => show)
+                    .map(({ val, label }) => (
+                      <label key={val} className="custom-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedCourseType === val}
+                          onChange={() => handleCourseTypeChange(val)}
+                        />
+                        <span className="checkmark">
+                          {selectedCourseType === val && <HiCheck />}
+                        </span>
+                        {label}
+                      </label>
+                    ))}
+                </div>
+                
+                {/* ✅ Messages informatifs spécifiques */}
+                {!hasAvailableTrialCourses && hasAvailableClassicCourses && (
+                  <p className="info-message">
+                    ℹ️ Les cours à l'essai sont actuellement complets.
+                  </p>
+                )}
+                {hasAvailableTrialCourses && !hasAvailableClassicCourses && (
+                  <p className="info-message">
+                    ℹ️ Les cours réguliers (trimestre/semestre/année) sont actuellement complets.
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -132,7 +159,11 @@ const CourseType = ({
               Précédent
             </button>
           )}
-          <button type="submit" className="btn-next-step">
+          <button 
+            type="submit" 
+            className="btn-next-step"
+            disabled={!hasAnyAvailableCourses} // ✅ Désactiver si aucun cours
+          >
             Suivant <HiArrowLongRight />
           </button>
         </div>
