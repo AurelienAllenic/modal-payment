@@ -114,10 +114,10 @@
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    color: #000; // couleur de la coche
+    color: #000;
   }
 
   &.selected .checkbox-custom {
-    background-color: transparent; // couleur de la case cochée
+    background-color: transparent;
   }
 }
