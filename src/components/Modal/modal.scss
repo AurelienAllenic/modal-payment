@@ -11,22 +11,22 @@
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translate(-50%, -48%);
+    transform: translateY(-12px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translateY(0);
   }
 }
 
 @keyframes fadeSlideOut {
   from {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translateY(0);
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -48%);
+    transform: translateY(-12px);
   }
 }
 
@@ -39,9 +39,13 @@
   background: var(--color-overlay, rgba(0, 0, 0, 0.45));
   backdrop-filter: blur(3px);
   animation: fadeIn 0.25s ease-out forwards;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  z-index: 1000;
 
   &.closing {
     animation: fadeOut 0.25s ease-out forwards;
@@ -52,11 +56,8 @@
 
   .modal {
     position: relative;
-    margin: 2rem auto;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 2rem);
+    margin: auto;
+    width: 100%;
     max-width: 640px;
     max-height: calc(100vh - 4rem);
     max-height: calc(100dvh - 4rem);
@@ -70,6 +71,7 @@
     overflow: hidden;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
     border: 1px solid var(--color-border, #e0e0e0);
+    flex-shrink: 0;
 
     /* Barre de séparation type header du site */
     &::before {
@@ -84,16 +86,14 @@
     }
 
     @media (max-width: 768px) {
-      margin: 1rem auto;
-      width: calc(100% - 1rem);
       max-height: calc(100vh - 2rem);
       max-height: calc(100dvh - 2rem);
-      padding: 0;
     }
 
     @media (max-width: 480px) {
-      margin: 0.75rem auto;
-      width: calc(100% - 1rem);
+      padding: 0;
+      max-height: calc(100vh - 1.5rem);
+      max-height: calc(100dvh - 1.5rem);
     }
 
     .container-close-modal {
