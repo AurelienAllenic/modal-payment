@@ -9,15 +9,15 @@
   margin: 0 auto;
   box-sizing: border-box;
   overflow-x: hidden;
-  padding: 0 25px;
+  padding: 0 0.5rem 2rem 0.5rem;
   
   @media (max-width: 625px) {
-    padding: 0 15px;
+    padding: 0 0.25rem 1.75rem 0.25rem;
     max-width: 100%;
   }
   
   @media (max-width: 420px) {
-    padding: 0 10px;
+    padding: 0 0 1.5rem 0;
   }
 
   .PersonalInfosTitle {

@@ -3,9 +3,18 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1.5rem;
   color: var(--color-text, #2c2c2c);
   max-width: 1200px;
+  padding: 0 0.5rem 2rem 0.5rem;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 0 0.25rem 1.75rem 0.25rem;
+  }
+  @media (max-width: 480px) {
+    padding: 0 0 1.5rem 0;
+  }
 
   .showReservationTitle {
     display: flex;
@@ -13,10 +22,10 @@
     align-items: center;
     color: var(--color-text, #2c2c2c);
     @media (max-width: 625px) {
-      padding: 20px 50px 0 10px;
+      padding: 0;
     }
     @media (max-width: 420px) {
-      padding: 20px 40px 0 10px;
+      padding: 0;
     }
 
     .stepIcon {
@@ -53,7 +62,7 @@
   form {
     display: flex;
     flex-direction: column;
-    padding: 0 25px;
+    padding: 0;
     width: 50%;
     flex: 1;
     min-width: 350px;

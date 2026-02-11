@@ -1,0 +1,12 @@
+.whatDaysContainer {
+  width: 100%;
+  padding: 0 0.5rem 2rem 0.5rem;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 0 0.25rem 1.75rem 0.25rem;
+  }
+  @media (max-width: 480px) {
+    padding: 0 0 1.5rem 0;
+  }
+}
