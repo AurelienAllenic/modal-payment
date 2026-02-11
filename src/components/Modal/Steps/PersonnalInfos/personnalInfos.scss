@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
-  color: #000;
+  color: var(--color-text, #2c2c2c);
   max-width: 800px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -116,17 +116,17 @@
 
           input {
             background: #fff;
-            color: #000;
+            color: var(--color-text, #2c2c2c);
             min-height: 25px;
             padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border-radius: 4px;
+            border: 1px solid var(--color-border, #d4d4d4);
             box-sizing: border-box;
             width: 100%;
             
             &:focus {
               outline: none;
-              border-color: #666;
+              border-color: var(--color-primary, #5a9aa8);
             }
           }
         }
@@ -161,16 +161,16 @@
           height: 150px;
           resize: none;
           background: #fff;
-          color: #000;
-          border: 1px solid #ccc;
+          color: var(--color-text, #2c2c2c);
+          border: 1px solid var(--color-border, #d4d4d4);
           padding: 8px;
-          border-radius: 5px;
+          border-radius: 4px;
           box-sizing: border-box;
           width: 100%;
           
           &:focus {
             outline: none;
-            border-color: #666;
+            border-color: var(--color-primary, #5a9aa8);
           }
         }
       }
@@ -209,7 +209,7 @@
 
           .number-display {
             background: #fff;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-border, #d4d4d4);
             padding: 5px 10px;
             font-size: 15px;
             font-weight: 500;
@@ -225,7 +225,7 @@
 
             .number-btn {
               background: #fff;
-              border: 1px solid #ccc;
+              border: 1px solid var(--color-border, #d4d4d4);
               width: 20px;
               height: 15px;
               display: flex;
@@ -246,7 +246,7 @@
               svg {
                 width: 20px;
                 height: 20px;
-                fill: #000;
+                fill: var(--color-text, #2c2c2c);
                 flex-shrink: 0;
               }
 
@@ -283,11 +283,11 @@
 
   .btn-prev-step {
     background: transparent;
-    border: 1px solid #000;
+    border: 1px solid var(--color-separator, #2c2c2c);
     padding: 8px 20px;
-    color: #000;
+    color: var(--color-text, #2c2c2c);
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -306,23 +306,27 @@
 
     &:hover {
       transform: scale(1.02);
-      background: #f0f0f0;
+      background: var(--color-primary-light, rgba(90, 154, 168, 0.08));
+      border-color: var(--color-primary, #5a9aa8);
+      color: var(--color-primary, #5a9aa8);
     }
   }
 
   .btn-next-step {
-    background: transparent;
-    border: 1px solid #000;
+    background: var(--color-primary, #5a9aa8);
+    border: 1px solid var(--color-primary, #5a9aa8);
     padding: 8px 20px;
-    color: #000;
+    color: #fff;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     gap: 15px;
     transition: all 0.2s ease;
     white-space: nowrap;
     margin-left: auto;
+    font-weight: 500;
+    cursor: pointer;
     
     @media (max-width: 625px) {
       justify-content: center;
@@ -335,10 +339,9 @@
     }
 
     &:hover {
-      transition: all 0.2s ease;
+      background: var(--color-primary-hover, #4a8a98);
+      border-color: var(--color-primary-hover, #4a8a98);
       transform: scale(1.02);
-      cursor: pointer;
-      background: #f0f0f0;
     }
   }
 }

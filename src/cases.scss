@@ -1,31 +1,57 @@
+/* Cases – message plus de places & chargement */
 .no-places-available {
-    text-align: center;
-    padding: 3rem 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-    background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
-    border: 2px solid #ff6b6b;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--color-bg-card, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.no-places-available h2 {
+  color: var(--color-text, #1a1a1a);
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.no-places-available p {
+  color: var(--color-text-muted, #666);
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.no-places-available p:last-child {
+  color: var(--color-text-muted, #888);
+  font-size: 0.95rem;
+  margin-top: 1.25rem;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .no-places-available {
+    padding: 2rem 1.25rem;
+    margin: 0 0.5rem;
   }
-  
+
   .no-places-available h2 {
-    color: #d32f2f;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
+    font-size: 1.35rem;
   }
-  
+
   .no-places-available p {
-    color: #666;
-    font-size: 1.1rem;
-    margin: 0.8rem 0;
-    line-height: 1.6;
+    font-size: 0.95rem;
   }
-  
-  .no-places-available p:last-child {
-    color: #888;
-    font-size: 1rem;
-    margin-top: 1.5rem;
-    font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .no-places-available {
+    padding: 1.5rem 1rem;
   }
+
+  .no-places-available h2 {
+    font-size: 1.2rem;
+  }
+}

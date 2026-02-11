@@ -1,65 +1,197 @@
+/* ─────────────────────────────────────────────────────────────
+   Charte Claquettes-Swing – variables & base
+   ───────────────────────────────────────────────────────────── */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Couleurs (alignées sur le site : gris clair, teal logo, texte sombre) */
+  --color-bg: #ebeaea;
+  --color-bg-card: #ffffff;
+  --color-text: #2c2c2c;
+  --color-text-muted: #5a5a5a;
+  --color-border: #d4d4d4;
+  --color-separator: #2c2c2c;
+  --color-primary: #5a9aa8;
+  --color-primary-hover: #4a8a98;
+  --color-primary-light: rgba(90, 154, 168, 0.1);
+  --color-success: #2e7d32;
+  --color-error: #c62828;
+  --color-overlay: rgba(0, 0, 0, 0.45);
+  /* Typo – sobre, sans-serif comme le site */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: #000;
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 a {
   text-decoration: inherit;
+  color: inherit;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Layout global
+   ───────────────────────────────────────────────────────────── */
 .container-app {
   min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e0e0e0;
+  background: var(--color-bg);
+  background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
+  padding: 2rem 1rem;
 }
+
+@media (max-width: 768px) {
+  .container-app {
+    padding: 1.5rem 0.75rem;
+    align-items: flex-start;
+    padding-top: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-app {
+    padding: 1rem 0.5rem;
+    padding-top: 3.5rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Accueil – options (HomePage)
+   ───────────────────────────────────────────────────────────── */
 .containerOptions {
-  display: flex;
-  gap: 20px;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 900px;
 }
+
 .containerOptions button {
-  font-size: 22px;
+  font-size: 1.05rem;
   font-weight: 500;
-  background: transparent;
-  color: #000;
-  padding: 10px;
-  border: 1px solid #000;
-  border-radius: 5px;
-  transition: all 0.2s ease-in-out;
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
+
 .containerOptions button:hover {
-  transform: scale(1.01);
-  transition: all 0.2s ease-in-out;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(90, 154, 168, 0.15);
+  transform: translateY(-2px);
 }
+
+.containerOptions button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .containerOptions {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .containerOptions button {
+    font-size: 1rem;
+    padding: 0.9rem 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .containerOptions button {
+    font-size: 0.95rem;
+    padding: 0.85rem 1rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Retour accueil (Cases & autres pages)
+   ───────────────────────────────────────────────────────────── */
 .return-home {
   position: fixed;
-  top: 50px;
-  left: 50px;
-  font-size: 30px;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
+
+.return-home:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  transform: translateX(-2px);
+}
+
 .iconReturnHome {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   transform: rotate(180deg);
-  fill: #000;
+  fill: var(--color-text);
+  transition: fill 0.2s ease;
+}
+
+.return-home:hover .iconReturnHome {
+  fill: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .return-home {
+    top: 0.75rem;
+    left: 0.75rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .iconReturnHome {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .return-home {
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 38px;
+    height: 38px;
+  }
+
+  .iconReturnHome {
+    width: 18px;
+    height: 18px;
+  }
 }

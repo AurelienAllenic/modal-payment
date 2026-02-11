@@ -4,13 +4,14 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
-  color: #000;
+  color: var(--color-text, #2c2c2c);
   max-width: 1200px;
 
   .showReservationTitle {
     display: flex;
     gap: 15px;
     align-items: center;
+    color: var(--color-text, #2c2c2c);
     @media (max-width: 625px) {
       padding: 20px 50px 0 10px;
     }
@@ -105,7 +106,7 @@
 
             .number-display {
               background: #fff;
-              border: 1px solid #ccc;
+              border: 1px solid var(--color-border, #d4d4d4);
               padding: 10px 20px;
               font-size: 20px;
               font-weight: 500;
@@ -142,7 +143,7 @@
                 svg {
                   width: 20px;
                   height: 20px;
-                  fill: #000;
+                  fill: var(--color-text, #2c2c2c);
                 }
 
                 &:hover {
@@ -207,11 +208,11 @@
 
   .btn-prev-step {
     background: transparent;
-    border: 1px solid #000;
-    padding: 5px 15px;
-    color: #000;
+    border: 1px solid var(--color-separator, #2c2c2c);
+    padding: 8px 20px;
+    color: var(--color-text, #2c2c2c);
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -219,29 +220,31 @@
     transition: all 0.2s ease;
 
     &:hover {
-      transform: scale(1.01);
+      transform: scale(1.02);
+      background: var(--color-primary-light, rgba(90, 154, 168, 0.08));
+      border-color: var(--color-primary, #5a9aa8);
+      color: var(--color-primary, #5a9aa8);
     }
   }
 
   .btn-next-step {
-    background: transparent;
-    border: 1px solid #000;
-    padding: 5px 15px;
-    color: #000;
+    background: var(--color-primary, #5a9aa8);
+    border: 1px solid var(--color-primary, #5a9aa8);
+    padding: 8px 20px;
+    color: #fff;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     gap: 15px;
     transition: all 0.2s ease;
-    
-    @media (max-width: 625px) {
-    }
+    font-weight: 500;
+    cursor: pointer;
 
     &:hover {
-      transition: all 0.2s ease;
-      transform: scale(1.01);
-      cursor: pointer;
+      background: var(--color-primary-hover, #4a8a98);
+      border-color: var(--color-primary-hover, #4a8a98);
+      transform: scale(1.02);
     }
   }
 }
