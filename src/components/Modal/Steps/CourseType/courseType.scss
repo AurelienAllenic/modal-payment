@@ -1,16 +1,18 @@
 .courseTypeContainer {
   max-width: 600px;
   margin: 0 auto;
-  padding: 0 0.5rem 2rem 0.5rem;
+  padding: 0 1.5rem 2rem 1.5rem;
   border-radius: 8px;
   color: var(--color-text, #2c2c2c);
   box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
 
   @media (max-width: 768px) {
-    padding: 0 0.25rem 1.75rem 0.25rem;
+    padding: 0 1.25rem 1.75rem 1.25rem;
   }
   @media (max-width: 480px) {
-    padding: 0 0 1.5rem 0;
+    padding: 0 1rem 1.5rem 1rem;
   }
 
   .courseTypeTitle {
